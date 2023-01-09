@@ -1,0 +1,189 @@
+% Template for a CDF graph
+%
+% Author: Zengwen Yuan
+% Version: 1.0  2017-03-08 init version
+% Note: to use package fontspec,
+% use XeLaTeX to compile
+
+\documentclass{article}
+\usepackage{siunitx}
+% \usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+%\usepackage{verbatim}
+\usepackage{sansmath}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{1pt}
+\usetikzlibrary{patterns}
+
+\pgfplotsset{compat=newest}
+
+\makeatletter
+\pgfplotsset{
+my filter/.style args={every#1between#2and#3}{%
+/pgfplots/x filter/.append code={%
+\ifnum\coordindex<#2%
+  % Nothing
+\else% Did we pass #3?
+  \ifnum\coordindex>#3%
+    %Nothing
+  \else% Ok filter is on, don't disturb \pgfmathresult for convenience
+    \pgfmathsetmacro\temp{int(mod(\coordindex,#1))}%
+    \ifnum0=\temp\relax% Are we on the nth point?
+      % Yes do nothing let it pass
+    \else% discard it
+      \let\pgfmathresult\pgfutil@empty
+    \fi%
+  \fi%
+\fi%
+}}}
+\makeatother
+
+\pgfplotsset{
+    compat=newest,
+    legend image code/.code={
+        \draw[mark repeat=2,mark phase=2]
+        plot coordinates {
+            (0cm,0cm)
+            (0.15cm,0cm)        %% default is (0.3cm,0cm)
+            (0.3cm,0cm)         %% default is (0.6cm,0cm)
+        };%
+    }
+}
+
+
+\definecolor{myred}{RGB}{202,0,32}
+\definecolor{myorange}{RGB}{244,165,130}
+\definecolor{myviolet}{RGB}{194,165,207}
+\definecolor{mycyan}{RGB}{146,197,222}
+\definecolor{myblue}{RGB}{5,113,176}
+\definecolor{mygreen}{RGB}{127,191,123}
+\definecolor{mytile}{RGB}{27,120,55}
+\definecolor{myblack}{RGB}{60,60,60}
+% \definecolor{palette3}{RGB}{247,247,247}
+
+\begin{document}
+
+\begin{tikzpicture}
+\begin{axis}[
+	table/col sep=comma,
+    xmin    = 0,
+    xmax    = 1,
+    ymin    = 0,
+    ymax    = 102,
+    width   = 3 cm,
+    height  = 3.2 cm,
+    scale only axis = true,
+    xtick align = inside,
+    tick label style={/pgf/number format/assume math mode=true},
+    %xticks = {0,0.2,0.4,0.6,0.8,1},
+    grid=both,
+    xtick = {0,0.25,0.5,0.75,1},
+    xticklabels ={,25,50,75,100},
+    %0.2,0.4,0.6,0.8,1},
+    %xticklabels ={, 0.2, ,0.6,, 1},
+    %xticklabels = {25\%, 50\%, 75\% 100\%},
+    ytick = {0, 20, ..., 100},
+    xticklabel style = {
+    	font=\normalsize,
+    	xshift=-4pt,
+    	yshift=3pt,
+    },
+    yticklabel style = {
+    	font=\normalsize,
+    	xshift=3.5pt,
+    	yshift=-3pt,
+    },
+    %yticklabels = {,,},
+    % % xticklabel pos=right,s
+    % xtick pos = left,
+    % ytick pos = left,
+    % % yticklabel pos=right,
+    % % enlargelimits=0.15,
+    legend style={
+	 at      = {(0.15, 0.38)},
+	%	at      = {(0.67, 0.75)},
+       % font    = \small,
+        fill    = none,
+        draw    = none,
+        anchor  = north west, 
+        legend cell align   = left,
+        legend columns      = 1,
+        row sep=-0.08cm,
+        /tikz/every odd column/.append style={column sep=0.02cm},
+    },
+    ylabel={CDF (\%)}, 
+    %Percentage $\gamma(\alpha)$ (\%)},
+    ylabel style={
+	   font=\normalsize,
+           yshift = -10 pt,
+           xshift = -4 pt,
+    },
+    xlabel={5G Utilization (\%)},
+    %{5G availability (\%)},
+    xlabel style={
+        font=\normalsize, 
+        %\normalsize,
+        % at={(current axis.north west)},
+        % rotate=-90,
+        % xshift=-1ex,
+        xshift = -4pt,
+        yshift = 6pt,
+    },
+]
+
+\addplot+[
+    no markers,
+		dashed,
+		smooth,
+		color       = blue,
+		line width  = 1.5pt,
+		line cap    = round,
+		line join   = round,
+		each nth point={1},
+]
+table[
+x expr = \thisrowno{0},
+y expr = \thisrowno{1}*100,
+] {A-R1_T111_MW_connectivity_ratio_pixel5_20210405_20211226_310410_0.0005_0_area_type.csv};
+  
+        
+\addplot+[
+    no markers,
+solid,
+smooth,
+color       = black,
+line width  = 1.5pt,
+line cap    = round,
+line join   = round,
+each nth point={1},
+]
+table[
+x expr = \thisrowno{0},
+y expr = \thisrowno{1}*100,
+] {A-R1_T111_Sub6_connectivity_ratio_pixel5_20210405_20211226_310410_0.0005_0_area_type.csv};
+
+\addplot+[
+no markers,
+dotted,
+smooth,
+color       =green,
+line width  = 1.5 pt,
+line cap    = round,
+line join   = round,
+each nth point={1},
+]
+table[
+x expr = \thisrowno{0},
+y expr = \thisrowno{1}*100,
+] {A-R1_T011_Sub6_connectivity_ratio_pixel5_20210405_20211226_310410_0.0005_0_area_type.csv};
+  
+ 
+\legend{5G$_m$ in R1A, 5G$_s$ in R1A, 5G$_s$ in R1B};
+%\legend{Set};
+
+\end{axis}
+\end{tikzpicture}
+
+\end{document}

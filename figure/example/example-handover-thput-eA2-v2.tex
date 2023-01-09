@@ -1,0 +1,786 @@
+% Version: 1.0  2017-03-08 init version
+% Note: to use package fontspec,
+% use XeLaTeX to compile
+
+\documentclass{article}
+\usepackage{siunitx}
+% \usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+%\usepackage{verbatim}
+%\usepackage{sansmath}
+\usepackage{blindtext}
+\usepackage[active,tightpage]{preview}
+%\usepgfplotslibrary{statistics}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{1pt}
+\usetikzlibrary{patterns}
+%\usetikzlibrary{pgfplots.statistics}
+
+\pgfplotsset{compat=newest}
+
+%\usepackage{fontspec}
+%\setmainfont[
+%BoldFont={Arial Bold},
+%ItalicFont={Arial Italic},
+%BoldItalicFont={Arial Bold Italic}
+%]{Arial}
+
+
+\makeatletter
+\pgfplotsset{
+my filter/.style args={every#1between#2and#3}{%
+/pgfplots/x filter/.append code={%
+\ifnum\coordindex<#2%
+  % Nothing
+\else% Did we pass #3?
+  \ifnum\coordindex>#3%
+    %Nothing
+  \else% Ok filter is on, don't disturb \pgfmathresult for convenience
+    \pgfmathsetmacro\temp{int(mod(\coordindex,#1))}%
+    \ifnum0=\temp\relax% Are we on the nth point?
+      % Yes do nothing let it pass
+    \else% discard it
+      \let\pgfmathresult\pgfutil@empty
+    \fi%
+  \fi%
+\fi%
+}}}
+\makeatother
+
+\pgfplotsset{xtick style={draw=none}}
+
+\usepgfplotslibrary{statistics}
+\makeatletter
+\pgfplotsset{
+	boxplot prepared from table/.code={
+		\def\tikz@plot@handler{\pgfplotsplothandlerboxplotprepared}%
+		\pgfplotsset{
+			/pgfplots/boxplot prepared from table/.cd,
+			#1,
+		}
+	},
+	/pgfplots/boxplot prepared from table/.cd,
+	table/.code={\pgfplotstablecopy{#1}\to\boxplot@datatable},
+	row/.initial=0,
+	make style readable from table/.style={
+		#1/.code={
+			\pgfplotstablegetelem{\pgfkeysvalueof{/pgfplots/boxplot prepared from table/row}}{##1}\of\boxplot@datatable
+			\pgfplotsset{boxplot/#1/.expand once={\pgfplotsretval}}
+		}
+	},
+make style readable from table=draw position,
+	make style readable from table=lower whisker,
+	make style readable from table=upper whisker,
+	make style readable from table=lower quartile,
+	make style readable from table=upper quartile,
+	make style readable from table=median,
+	make style readable from table=lower notch,
+	make style readable from table=upper notch
+}
+\makeatother
+
+\makeatletter
+\pgfplotsset{% basis: example on p. 262 of the pgfplots manual
+	/pgfplots/area legend/.style={
+		/pgfplots/legend image code/.code={
+			\draw[#1] (0cm,0.15em) rectangle (0.6*\pgfplotbarwidth,-0.15em);
+		}, },
+}
+\makeatother
+
+\definecolor{myred}{RGB}{202,0,32}
+\definecolor{myorange}{RGB}{244,165,130}
+\definecolor{myviolet}{RGB}{194,165,207}
+\definecolor{mycyan}{RGB}{146,197,222}
+\definecolor{myblue}{RGB}{5,113,176}
+\definecolor{mygreen}{RGB}{127,191,123}
+\definecolor{mytile}{RGB}{27,120,55}
+\definecolor{myblack}{RGB}{60,60,60}
+% \definecolor{palette3}{RGB}{247,247,247}
+
+
+
+\begin{document}
+
+% Example-A-2: 
+%\pgfplotstableread[col sep = comma]{Example-A-2-cellset-pcell-only.csv}\cellsettable
+\pgfplotstableread[col sep = comma]{example-handover-thput-eA2-processed.csv}\cellsettable
+\pgfplotstableread[col sep = comma]{Example-A-2-thput-0.1.csv}\speedtable
+\pgfplotstableread[col sep = comma]{Example-A-2-thput-1.csv}\secspeedtable
+% starttime: 1640549190;
+% endtime: 1640636250;
+% xmin = 0;
+% xmax = 660; 
+
+\begin{tikzpicture}
+%\pgfkeys{
+%	/pgf/number format/precision=2, 
+%	/pgf/number format/fixed zerofill=true,
+%	/pgf/number format/fixed
+%}
+
+\begin{axis}[
+    % my filter=every 100 between 0 and 18000,
+    % ybar,
+    name=plot1,
+    boxplot/draw direction=y,
+    %box plot width=0.5em,
+    %axis y,
+    %axis y line*=left,
+    %axis x line*=middle,
+    %y dir=reverse,
+    % box plot width=0.5em,
+    axis y line*=left,
+    axis x line*=top, %middle,
+    width   = 7 cm,
+    height  = 3cm,% 1.5 cm
+    % w:h: 14cm vs 4cm (single column
+    % w:h: 7cm vs 4cm (1/2 column)
+% example 1
+%    ymax    = 240,
+%    ymin    = -240,
+	xmin=0,
+	xmax=500,	
+%    ytick={0, 100, 200},
+%    yticklabels={0,100, 200},
+   ymax= 450,
+   ymin= -600,	
+%    ytick={0, 200, 400},
+%    yticklabels={0, 200,400},
+    ytick={200, 400},
+    yticklabels={200,400},
+     xtick pos=left,
+    %xtick={0,15, 30,45},
+   % xticklabels ={,15s,30s,45s},
+    scale only axis = true,
+    xtick align = inside,
+    tick label style={/pgf/number format/assume math mode=true},
+    xticklabel style = {font=\normalsize},
+    yticklabel style = {font=\normalsize},
+    xticklabel style={yshift=3ex, anchor=south},
+    xticklabels={},
+    % % xticklabel pos=right,
+    % xtick pos = left,
+    % ytick pos = left,
+    % % yticklabel pos=right,
+    % % enlargelimits=0.15,
+    ylabel={(Mbps)},
+    ylabel style={
+        font=\small,
+        yshift =  -5 pt,
+        xshift =  26 pt,
+    },
+    % xlabel={Location in static tests},
+%    xlabel style={
+%        font=\normalsize,
+%        at={(axis description cs:0.5,-0.1)},
+%        anchor=north,
+%        xshift = 0 pt,
+%    },
+    legend style={
+	 at      = {(1.02, 1.06)},
+%        legend entries = {Default runs, Customized runs},
+        font    = \small, % \normalsize,
+        fill    = none,
+        draw    = none,
+%        anchor  = south east,
+        legend cell align   = left,
+        legend columns      = 1,
+    },
+    ]
+
+\addplot[
+        %only marks,
+        %smooth,
+        %every mark/.append style={solid,fill=white},
+        % mark=star,
+        %mark=none,
+        %mark size=1pt,
+        color       = blue,
+        % draw opacity=0.7,
+        %line width  = 1.2pt,
+        % line cap    = round,
+        % line join   = round,
+        %each nth point={1},
+        %draw = red,
+        fill = blue,
+    ]
+    table[x=time_delta,y=throughput]      from \cellsettable \closedcycle;
+
+ 
+%\addplot+[
+%        %only marks,
+%        smooth,
+%        solid,
+%        %dashed,
+%        %every mark/.append style={solid,fill=white},
+%        % mark=star,
+%        mark=none,
+%        %mark size=1pt,
+%        color       = red,
+%        draw opacity=0.5,
+%        line width  = 1pt,
+%        % line cap    = round,
+%        % line join   = round,
+%        %each nth point={1},
+%        %draw = red,
+%    ]
+%    table[x=time_delay,y=thputPerSecond]      from \secspeedtable;
+
+%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(0,20) (600,20)};
+%\legend{Speed (0.1s), Speed (1s)}
+%\legend{Speed (100ms), Speed (1s)}
+%\addplot[mark=none, dashed, gray] coordinates {(0,2) (24,2)};
+
+%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(65,450) (65,500)};
+%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(95,450) (95,500)};
+%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(125,450) (125,500)};
+
+%\draw[red,dotted]  (axis cs:7.3,0) -- (axis cs: (7.3,600);
+%\draw[red,dotted]  (axis cs:24.5,0) -- (axis cs: (24.5,600);
+%\draw[red,dotted]  (axis cs:117.6340201,0) -- (axis cs: (117.6340201,600);
+%\draw[red,dotted]  (axis cs:128.75,0) -- (axis cs: (128.75,600);
+
+%\node[red,right] at (axis cs: 12,200) {\small \bf 5G};     
+%\draw[red,->]  (axis cs:10,200) -- (axis cs: 7.3,200);
+%\draw[red,->]  (axis cs:20,200) -- (axis cs: 24.5,200);
+%\draw[red,<->]  (axis cs:117.7,200) -- (axis cs: 128.7,200);
+%\node[red,right] at (axis cs: 117,300) {\small \bf 4G};     
+\end{axis}
+
+
+
+\begin{axis}[
+    % my filter=every 100 between 0 and 18000,
+    % line width = 1pt,
+    % ybar,
+    %boxplot/draw direction=y,
+    %box plot width=0.5em,
+    axis y,
+   %axis y line*=left,
+   % axis x line*=bottom,
+    axis x,
+    %y dir=reverse,
+    width   = 7cm,
+    height  = 3cm,
+	% example A-2
+	xmin=0,
+	xmax=500,
+%    scale only axis = true,
+%    xtick={20, 50,80,110},
+%    xticklabels ={,30s,60s,90s},
+    	ymax=25, %10*450/300+10
+   	ymin=-10,
+    %xmax    = 50,		
+    %xmin    = 0,		
+    scale only axis = true,
+    xtick={0,60,120,180,240,300,360,420,480},
+    %xticklabels ={0,1,2,3,4,5,6,7,,8,9,10,11},
+    xticklabels={0,60s,120s,180s,240s,300s,360s,420s,480s},
+%    xticklabels ={,30s,60s,90s},
+%s    xtick align = inside,
+    tick label style={/pgf/number format/assume math mode=true},
+    ytick={4,8},
+    yticklabels={4,8},
+    %4G only, , , 4G+5G$_m$,},
+    %{1,2,3,4,5},
+    xticklabel style={yshift=-12pt, anchor=south},
+    yticklabel style = {font=\small},
+    % % xticklabel pos=right,
+    % xtick pos = left,
+    % ytick pos = left,
+    % % yticklabel pos=right,
+    % % enlargelimits=0.15,
+    legend style={
+%        at      = {(1, 1.06)},
+%        legend entries = {Default runs, Customized runs},
+        font    = \normalsize,
+        fill    = none,
+        draw    = none,
+%        anchor  = south east,
+        legend cell align   = left,
+        legend columns      = 2,
+    },
+    ylabel={Cell \#},
+    ylabel style={
+        font=\small,
+        %text width=0.8cm,
+        % at={(current axis.north west)},
+        %rotate=-90,
+        %xshift= 0.05cm,
+        %yshift=-0.75cm,
+        xshift= -0.15cm,
+        %yshift= 0.24cm,
+        yshift= -0.15cm,
+    },
+    %xlabel={Location in static tests},
+    xlabel style={
+        font=\normalsize,
+        at={(axis description cs:0.5,-0.05)},
+        anchor=north,
+        % at={(current axis.north west)},
+        % rotate=-90,
+        % xshift=-1ex,
+        xshift = 0 pt,
+        % yshift = 5 pt,
+    },
+    ]
+   
+%    currarrow,
+%    pos=0.5, 
+%    xscale=-1,
+%    sloped,
+%    scale=2] {};
+
+\addplot[
+        %only marks,
+        %smooth,
+        %every mark/.append style={solid,fill=white},
+        % mark=star,
+        %mark=none,
+        %mark size=1pt,
+        color       = black,
+        % draw opacity=0.7,
+        %line width  = 1.2pt,
+        % line cap    = round,
+        % line join   = round,
+        %each nth point={1},
+        %draw = red,
+        %fill = blue,
+    ]
+    table[x=time_delta,y=cell_num]      from \cellsettable;
+ %    table[x=time_delay,y=Cellset]      from \cellsettable \closedcycle;
+   \addplot+[mark=none, solid,black,line width=0.5pt] coordinates {(0,0) (500,0)};
+
+%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(0,10) (200,10)};
+%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(0,40) (200,40)};
+%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(0,100) (200,100)};
+
+
+%\node[right] at (axis cs: 53,12) {\small   4G only (PCell only)};
+%\node[right] at (axis cs: 53,40) {\small  4G only (P+SCells)};
+%\node[blue,right] at (axis cs: 33,90) {\small \bf 4G+5G$_m$};
+
+%\draw[red,->,line width=0.3mm] (axis cs:7.0,40) -- (axis cs: 7.0,10);
+%\draw[blue,->,line width=0.3mm] (axis cs:7.3,10) -- (axis cs: 7.3,100);
+%
+%\draw[red,->,line width=0.3mm] (axis cs:24.5,100) -- (axis cs: 24.5,40);
+%\draw[red,->,line width=0.3mm] (axis cs:39.8,40) -- (axis cs: 39.8,10);
+
+%\node[right] at (axis cs: 52,12) {\small I-A: 4G only (PCell only)};
+%\node[right] at (axis cs: 52,40) {\small  I-B: 4G only (P+S)};
+%\node[blue,right] at (axis cs: 52,100) {\small III: 4G+5G$_m$};
+
+%\node[right] at (axis cs: 42,15) {\small I-A};
+%\node[right] at (axis cs: 36,40) {\small  I-B};
+%\node[blue,right] at (axis cs: 36,100) {\small III};
+
+%\node[right] at (axis cs: -1,50) {\small P+S};
+%\node[right] at (axis cs: -1,12) {\small P};
+%      
+%\node[blue,right] at (axis cs: 60,200) {\small 4G+5G$_m$};     
+%\draw[blue,->]  (axis cs:60,200) -- (axis cs: 50,200);
+%\draw[blue,->]  (axis cs:85,200) -- (axis cs: 105,200);
+%\draw[blue,->] (axis cs:85,200) to[out=330,in=170] (axis cs: 130,200);
+
+
+\addplot [thin,color=myred,opacity=0.25,fill=myred, 
+fill opacity=0.25]coordinates {
+    (0,-10) 
+    (0,25)
+    (85.39, 25)
+    (85.39, -10)
+      };
+      
+
+\addplot [thin,color=myred,opacity=0.25,fill=myred, 
+fill opacity=0.25]coordinates {
+    (163.6,-10) 
+    (163.3,25)
+    (210.85, 25)
+    (210.85, -10)
+      };
+%\node[] at (axis cs: 12,100) {City C1};
+
+\addplot [thin,color=myred,opacity=0.25,fill=myred, 
+fill opacity=0.25]coordinates {
+    (217.28,-10) 
+    (217.28,25)
+    (262.5, 25)
+    (262.5, -10)
+      };
+      
+\addplot [thin,color=myred,opacity=0.25,fill=myred, 
+fill opacity=0.25]coordinates {
+    (269.89,-10) 
+    (269.89,25)
+    (318.85,25)
+    (318.85, -10)
+      };
+      
+      
+      
+\addplot [thin,color=myred,opacity=0.25,fill=myred, 
+fill opacity=0.25]coordinates {
+    (330,20) 
+    (330,21.5)
+    (370,21.5)
+    (370,20)
+    (330,20) 
+      };
+      \node[red,right] at (axis cs: 370, 20.5) {\small 4G+5GM};
+      
+%\addplot [color=black,opacity=0.95,fill=white, 
+%fill opacity=0.25]coordinates {
+%    (310,4) 
+%    (310,5.5)
+%    (350,5.5)
+%    (350,4)
+%    (310,4) 
+%      };
+%\node[black,right] at (axis cs: 350,4.5) {\small 4G-only};
+      
+%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(0,1) (600,1)};
+%%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(0,2) (400,2)};
+%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(0,3) (300,3)};
+%%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(0,4) (80,4)};
+%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(0,5) (300,5)};
+%
+%\draw[gray,->,line width=0.3mm] (axis cs:76.58,4) -- (axis cs:76.58,1);
+%\draw[gray,->,line width=0.3mm] (axis cs:149.5266199,1) -- (axis cs:149.5266199,2);
+%\draw[red,->,line width=0.3mm] (axis cs:149.5266199,2) -- (axis cs: 149.5266199,5);
+%\draw[gray,->,line width=0.3mm] (axis cs:193.7105401,5) -- (axis cs:193.7105401,1);
+%\draw[gray,->,line width=0.3mm] (axis cs:199.57252,1) -- (axis cs:199.57252,2);
+%\draw[red,->,line width=0.3mm] (axis cs:199.57252,2) -- (axis cs:199.57252,5);
+%\draw[gray,->,line width=0.3mm] (axis cs:241.8703899,5) -- (axis cs:241.8703899,1);
+%\draw[gray,->,line width=0.3mm] (axis cs:248.1,1) -- (axis cs:248.1,2);
+%\draw[red,->,line width=0.3mm] (axis cs:248.66438012,2) -- (axis cs:248.66438012,5);
+%\draw[gray,->,line width=0.3mm] (axis cs:294.4870601,5) -- (axis cs:294.4870601,3);
+%\draw[gray,->,line width=0.3mm] (axis cs:297.2407999,3) -- (axis cs:297.2407999,1);
+%\draw[gray,->,line width=0.3mm] (axis cs:303.3484099,1) -- (axis cs:303.3484099,2);
+%\draw[gray,->,line width=0.3mm] (axis cs:358.9901199,2) -- (axis cs:358.9901199,1);
+%\draw[gray,->,line width=0.3mm] (axis cs:363.8863599,1) -- (axis cs:363.8863599,2);
+%\draw[gray,->,line width=0.3mm] (axis cs:417.9895999,2) -- (axis cs:417.9895999,1);
+%\draw[gray,->,line width=0.3mm] (axis cs:425.8401999,1) -- (axis cs:425.8401999,2);
+%
+%\draw[red,->,line width=0.3mm] (axis cs:330,3) -- (axis cs:330,5);
+%\draw[gray,->,line width=0.3mm] (axis cs:340,5) -- (axis cs:340,3); 
+%\node[black,right] at (axis cs: 350,4.25) {\small Handover};
+
+
+
+%\node[right] at (axis cs: 200,13) {w/ 5G};
+%\node[right] at (axis cs: 200,9.5) {w/o 5G (4G only)};
+
+%\draw[red,->]  (axis cs:-10,1) -- (axis cs:0,1);
+%\node[blue,right] at (axis cs: -5,4.75) {\small 4G+5G$_m$};
+%\node[red,right] at (axis cs: 80,2) {\small 4G-only};
+%\node[red,right] at (axis cs: -1,0.75) {\small CS1};
+%\node[red,right] at (axis cs: 25,3) {\small CS3};
+%
+%\node[red,right] at (axis cs: 295,2) {\small CS2};
+%
+%\node[blue,right] at (axis cs: 75,3.75) {\small CS4};
+%\node[blue,right] at (axis cs: 295,4.75) {\small CS5};
+
+
+
+%\node[] at (axis cs: 30,4) {\small CS$_3$};
+%\node[blue] at (axis cs: 100,2) {\small CS$_1$};
+%\node[red] at (axis cs: 113,4) {\small CS$_2$};
+%\node[circle] at (axis cs:149.5266199,2) {};
+%\draw[red,->]  (axis cs:149.5266199,2) -- (axis cs:130,4);
+%\draw[red,->]  (axis cs:199.57252,2) -- (axis cs:130,4);
+%\draw[red,->]  (axis cs:248.66438012,2) -- (axis cs:130,4);
+%\draw[red,o-]  (axis cs:149.5266199,2) -- (axis cs:130,4);
+%\draw[blue,->]  (axis cs:196,1)  to[out=200,in=350]  (axis cs:100,1);
+%\draw[blue,->]  (axis cs:245,1)  to[out=280,in=350]  (axis cs:100,1);
+%\node[] at (axis cs: 170,5) {\small CS$_4$};
+%\node[] at (axis cs: 220,5) {\small CS$_4$};
+%\node[] at (axis cs: 270,5) {\small CS$_4$};
+%\node[] at (axis cs: 330,4) {\small CS$_5$};
+%\draw[black,->]  (axis cs:295,5)  to[out=30,in=130]  (axis cs:310,5);
+%\node[red,right] at (axis cs: 200,4) {\small Loop 1: CS1$\rightarrow$CS2$\rightarrow$CS4$\rightarrow$CS1$\cdots$};
+%\node[red,right] at (axis cs: 300,3) {\small Loop 2: CS1$\rightarrow$CS2$\rightarrow$CS1$\rightarrow$$\cdots$};
+
+
+%\addplot [thick,color=gray,opacity=0.3,fill=gray, 
+%fill opacity=0.3]coordinates { 
+%    (24.5,-125)
+%    (24.5, 125)
+%    (22.5, 125)
+%    (22.5, -125)
+%      };
+%\node[] at (axis cs: 23.5,100) {C4};
+
+\end{axis}
+
+\begin{axis}[
+	% my filter=every 100 between 0 and 18000,
+	% line width = 1pt,
+	% ybar,
+	%boxplot/draw direction=y,
+	%box plot width=0.5em,
+	axis y,
+	%axis y line*=left,
+	% axis x line*=bottom,
+	axis x,
+	%y dir=reverse,
+	width   = 7cm,
+	height  = 3cm,
+	% example A-2
+	xmin=0,
+	xmax=500,
+	%    scale only axis = true,
+	%    xtick={20, 50,80,110},
+	%    xticklabels ={,30s,60s,90s},
+	ymax=1750, %500*750/300+500
+	ymin=0,
+	%xmax    = 50,		
+	%xmin    = 0,		
+	scale only axis = true,
+	xtick={0,60,120,180,240,300,360,420,480},
+	%xticklabels ={0,1,2,3,4,5,6,7,,8,9,10,11},
+	xticklabels={0,60s,120s,180s,240s,300s,360s,420s,480s},
+	%    xticklabels ={,30s,60s,90s},
+	%s    xtick align = inside,
+	tick label style={/pgf/number format/assume math mode=true},
+	ytick={200, 400},
+	yticklabels={200, 400},
+	%4G only, , , 4G+5G$_m$,},
+%{1,2,3,4,5},
+xticklabel style={yshift=-12pt, anchor=south},
+yticklabel style = {font=\small},
+% % xticklabel pos=right,
+% xtick pos = left,
+% ytick pos = left,
+% % yticklabel pos=right,
+% % enlargelimits=0.15,
+legend style={
+	%        at      = {(1, 1.06)},
+	%        legend entries = {Default runs, Customized runs},
+	font    = \normalsize,
+	fill    = none,
+	draw    = none,
+	%        anchor  = south east,
+	legend cell align   = left,
+	legend columns      = 2,
+},
+ylabel={(MHz)},
+ylabel style={
+	font=\small,
+	%text width=0.8cm,
+	% at={(current axis.north west)},
+	%rotate=-90,
+	%xshift= 0.05cm,
+	%yshift=-0.75cm,
+	xshift= -1.15cm,
+	yshift= -0.15 cm,
+},
+%xlabel={Location in static tests},
+xlabel style={
+	font=\normalsize,
+	at={(axis description cs:0.5,-0.05)},
+	anchor=north,
+	% at={(current axis.north west)},
+	% rotate=-90,
+	% xshift=-1ex,
+	xshift = 0 pt,
+	% yshift = 5 pt,
+},
+]
+
+%    currarrow,
+%    pos=0.5, 
+%    xscale=-1,
+%    sloped,
+%    scale=2] {};
+
+\addplot[
+%only marks,
+%smooth,
+%every mark/.append style={solid,fill=white},
+% mark=star,
+%mark=none,
+%mark size=1pt,
+color       = black,
+% draw opacity=0.7,
+%line width  = 1.2pt,
+% line cap    = round,
+% line join   = round,
+%each nth point={1},
+%draw = red,
+%fill = blue,
+]
+table[x=time_delta,y=width]      from \cellsettable;
+%    table[x=time_delay,y=Cellset]      from \cellsettable \closedcycle;
+
+
+%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(0,10) (200,10)};
+%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(0,40) (200,40)};
+%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(0,100) (200,100)};
+
+
+%\node[right] at (axis cs: 53,12) {\small   4G only (PCell only)};
+%\node[right] at (axis cs: 53,40) {\small  4G only (P+SCells)};
+%\node[blue,right] at (axis cs: 33,90) {\small \bf 4G+5G$_m$};
+
+%\draw[red,->,line width=0.3mm] (axis cs:7.0,40) -- (axis cs: 7.0,10);
+%\draw[blue,->,line width=0.3mm] (axis cs:7.3,10) -- (axis cs: 7.3,100);
+%
+%\draw[red,->,line width=0.3mm] (axis cs:24.5,100) -- (axis cs: 24.5,40);
+%\draw[red,->,line width=0.3mm] (axis cs:39.8,40) -- (axis cs: 39.8,10);
+
+%\node[right] at (axis cs: 52,12) {\small I-A: 4G only (PCell only)};
+%\node[right] at (axis cs: 52,40) {\small  I-B: 4G only (P+S)};
+%\node[blue,right] at (axis cs: 52,100) {\small III: 4G+5G$_m$};
+
+%\node[right] at (axis cs: 42,15) {\small I-A};
+%\node[right] at (axis cs: 36,40) {\small  I-B};
+%\node[blue,right] at (axis cs: 36,100) {\small III};
+
+%\node[right] at (axis cs: -1,50) {\small P+S};
+%\node[right] at (axis cs: -1,12) {\small P};
+%      
+%\node[blue,right] at (axis cs: 60,200) {\small 4G+5G$_m$};     
+%\draw[blue,->]  (axis cs:60,200) -- (axis cs: 50,200);
+%\draw[blue,->]  (axis cs:85,200) -- (axis cs: 105,200);
+%\draw[blue,->] (axis cs:85,200) to[out=330,in=170] (axis cs: 130,200);
+
+
+%\addplot [thin,color=myred,opacity=0.25,fill=myred, 
+%fill opacity=0.25]coordinates {
+%	(0,4) 
+%	(0,15)
+%	(76.58, 15)
+%	(76.58, 4)
+%};
+%
+%
+%\addplot [thin,color=myred,opacity=0.25,fill=myred, 
+%fill opacity=0.25]coordinates {
+%	(149.5266199,5) 
+%	(149.5266199,15)
+%	(193.7105401, 15)
+%	(193.7105401, 5)
+%};
+%%\node[] at (axis cs: 12,100) {City C1};
+%
+%\addplot [thin,color=myred,opacity=0.25,fill=myred, 
+%fill opacity=0.25]coordinates {
+%	(199.57252,5) 
+%	(199.57252,15)
+%	(241.8703899, 15)
+%	(241.8703899, 5)
+%};
+%
+%\addplot [thin,color=myred,opacity=0.25,fill=myred, 
+%fill opacity=0.25]coordinates {
+%	(248.66438012,5) 
+%	(248.6643801,15)
+%	(294.4870601,15)
+%	(294.4870601, 5)
+%};
+%
+%
+%
+%\addplot [thin,color=myred,opacity=0.25,fill=myred, 
+%fill opacity=0.25]coordinates {
+%	(310,8) 
+%	(310,9.5)
+%	(350,9.5)
+%	(350,8)
+%	(310,8) 
+%};
+%\node[red,right] at (axis cs: 350, 8.5) {\small 4G+5G$_m$};
+
+%\addplot [color=black,opacity=0.95,fill=white, 
+%fill opacity=0.25]coordinates {
+	%    (310,4) 
+	%    (310,5.5)
+	%    (350,5.5)
+	%    (350,4)
+	%    (310,4) 
+	%      };
+%\node[black,right] at (axis cs: 350,4.5) {\small 4G-only};
+
+%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(0,1) (600,1)};
+%%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(0,2) (400,2)};
+%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(0,3) (300,3)};
+%%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(0,4) (80,4)};
+%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(0,5) (300,5)};
+%
+%\draw[gray,->,line width=0.3mm] (axis cs:76.58,4) -- (axis cs:76.58,1);
+%\draw[gray,->,line width=0.3mm] (axis cs:149.5266199,1) -- (axis cs:149.5266199,2);
+%\draw[red,->,line width=0.3mm] (axis cs:149.5266199,2) -- (axis cs: 149.5266199,5);
+%\draw[gray,->,line width=0.3mm] (axis cs:193.7105401,5) -- (axis cs:193.7105401,1);
+%\draw[gray,->,line width=0.3mm] (axis cs:199.57252,1) -- (axis cs:199.57252,2);
+%\draw[red,->,line width=0.3mm] (axis cs:199.57252,2) -- (axis cs:199.57252,5);
+%\draw[gray,->,line width=0.3mm] (axis cs:241.8703899,5) -- (axis cs:241.8703899,1);
+%\draw[gray,->,line width=0.3mm] (axis cs:248.1,1) -- (axis cs:248.1,2);
+%\draw[red,->,line width=0.3mm] (axis cs:248.66438012,2) -- (axis cs:248.66438012,5);
+%\draw[gray,->,line width=0.3mm] (axis cs:294.4870601,5) -- (axis cs:294.4870601,3);
+%\draw[gray,->,line width=0.3mm] (axis cs:297.2407999,3) -- (axis cs:297.2407999,1);
+%\draw[gray,->,line width=0.3mm] (axis cs:303.3484099,1) -- (axis cs:303.3484099,2);
+%\draw[gray,->,line width=0.3mm] (axis cs:358.9901199,2) -- (axis cs:358.9901199,1);
+%\draw[gray,->,line width=0.3mm] (axis cs:363.8863599,1) -- (axis cs:363.8863599,2);
+%\draw[gray,->,line width=0.3mm] (axis cs:417.9895999,2) -- (axis cs:417.9895999,1);
+%\draw[gray,->,line width=0.3mm] (axis cs:425.8401999,1) -- (axis cs:425.8401999,2);
+%
+%\draw[red,->,line width=0.3mm] (axis cs:330,3) -- (axis cs:330,5);
+%\draw[gray,->,line width=0.3mm] (axis cs:340,5) -- (axis cs:340,3); 
+%\node[black,right] at (axis cs: 350,4.25) {\small Handover};
+
+
+
+%\node[right] at (axis cs: 200,13) {w/ 5G};
+%\node[right] at (axis cs: 200,9.5) {w/o 5G (4G only)};
+
+%\draw[red,->]  (axis cs:-10,1) -- (axis cs:0,1);
+%\node[blue,right] at (axis cs: -5,4.75) {\small 4G+5G$_m$};
+%\node[red,right] at (axis cs: 80,2) {\small 4G-only};
+%\node[red,right] at (axis cs: -1,0.75) {\small CS1};
+%\node[red,right] at (axis cs: 25,3) {\small CS3};
+%
+%\node[red,right] at (axis cs: 295,2) {\small CS2};
+%
+%\node[blue,right] at (axis cs: 75,3.75) {\small CS4};
+%\node[blue,right] at (axis cs: 295,4.75) {\small CS5};
+
+
+
+%\node[] at (axis cs: 30,4) {\small CS$_3$};
+%\node[blue] at (axis cs: 100,2) {\small CS$_1$};
+%\node[red] at (axis cs: 113,4) {\small CS$_2$};
+%\node[circle] at (axis cs:149.5266199,2) {};
+%\draw[red,->]  (axis cs:149.5266199,2) -- (axis cs:130,4);
+%\draw[red,->]  (axis cs:199.57252,2) -- (axis cs:130,4);
+%\draw[red,->]  (axis cs:248.66438012,2) -- (axis cs:130,4);
+%\draw[red,o-]  (axis cs:149.5266199,2) -- (axis cs:130,4);
+%\draw[blue,->]  (axis cs:196,1)  to[out=200,in=350]  (axis cs:100,1);
+%\draw[blue,->]  (axis cs:245,1)  to[out=280,in=350]  (axis cs:100,1);
+%\node[] at (axis cs: 170,5) {\small CS$_4$};
+%\node[] at (axis cs: 220,5) {\small CS$_4$};
+%\node[] at (axis cs: 270,5) {\small CS$_4$};
+%\node[] at (axis cs: 330,4) {\small CS$_5$};
+%\draw[black,->]  (axis cs:295,5)  to[out=30,in=130]  (axis cs:310,5);
+%\node[red,right] at (axis cs: 200,4) {\small Loop 1: CS1$\rightarrow$CS2$\rightarrow$CS4$\rightarrow$CS1$\cdots$};
+%\node[red,right] at (axis cs: 300,3) {\small Loop 2: CS1$\rightarrow$CS2$\rightarrow$CS1$\rightarrow$$\cdots$};
+
+
+%\addplot [thick,color=gray,opacity=0.3,fill=gray, 
+%fill opacity=0.3]coordinates { 
+	%    (24.5,-125)
+	%    (24.5, 125)
+	%    (22.5, 125)
+	%    (22.5, -125)
+	%      };
+%\node[] at (axis cs: 23.5,100) {C4};
+
+\end{axis}
+
+\end{tikzpicture}
+
+
+\end{document}

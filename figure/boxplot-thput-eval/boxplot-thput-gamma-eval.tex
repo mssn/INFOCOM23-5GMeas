@@ -1,0 +1,629 @@
+% Template for a CDF graph
+%
+% Author: Zengwen Yuan
+% Version: 1.0  2017-03-08 init version
+% Note: to use package fontspec,
+% use XeLaTeX to compile
+
+\documentclass{standalone}
+\usepackage{siunitx}
+% \usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+%\usepackage{verbatim}
+\usepackage{tikz}
+\usepackage{helvet,etoolbox}
+%\usepackage{sansmath}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{1pt}
+\usetikzlibrary{patterns}
+\usetikzlibrary{pgfplots.statistics}
+
+\pgfplotsset{compat=newest}
+
+%\usepackage{fontspec}
+%\setmainfont[
+%BoldFont={Arial Bold},
+%ItalicFont={Arial Italic},
+%BoldItalicFont={Arial Bold Italic}
+%]{Arial}
+
+%\AtBeginEnvironment{tikzpicture}{\sansmath}
+%\AtEndEnvironment{tikzpicture}{\unsansmath}
+
+% # user-study-sync-overhead-context-tx-v2.txt
+%\pgfplotstableread{
+%0   0
+%1000   0.1
+%5000   0.8
+%10000   0.95
+%20000   1
+%}{\fakedata}
+
+\makeatletter
+\pgfplotsset{
+my filter/.style args={every#1between#2and#3}{%
+/pgfplots/x filter/.append code={%
+\ifnum\coordindex<#2%
+  % Nothing
+\else% Did we pass #3?
+  \ifnum\coordindex>#3%
+    %Nothing
+  \else% Ok filter is on, don't disturb \pgfmathresult for convenience
+    \pgfmathsetmacro\temp{int(mod(\coordindex,#1))}%
+    \ifnum0=\temp\relax% Are we on the nth point?
+      % Yes do nothing let it pass
+    \else% discard it
+      \let\pgfmathresult\pgfutil@empty
+    \fi%
+  \fi%
+\fi%
+}}}
+\makeatother
+
+
+
+\pgfplotsset{
+    compat=newest,
+    legend image code/.code={
+        \draw[mark repeat=2,mark phase=2]
+        plot coordinates {
+            (0cm,0cm)
+            (0.3cm,0cm)        %% default is (0.3cm,0cm)
+            (0.6cm,0cm)         %% default is (0.6cm,0cm)
+        };%
+    }
+}
+
+\makeatletter
+\pgfplotsset{
+	boxplot prepared from table/.code={
+		\def\tikz@plot@handler{\pgfplotsplothandlerboxplotprepared}%
+		\pgfplotsset{
+			/pgfplots/boxplot prepared from table/.cd,
+			#1,
+		}
+	},
+	/pgfplots/boxplot prepared from table/.cd,
+	table/.code={\pgfplotstablecopy{#1}\to\boxplot@datatable},
+	row/.initial=0,
+	make style readable from table/.style={
+		#1/.code={
+			\pgfplotstablegetelem{\pgfkeysvalueof{/pgfplots/boxplot prepared from table/row}}{##1}\of\boxplot@datatable
+			\pgfplotsset{boxplot/#1/.expand once={\pgfplotsretval}}
+		}
+	},
+	make style readable from table=lower whisker,
+	make style readable from table=upper whisker,
+	make style readable from table=lower quartile,
+	make style readable from table=upper quartile,
+	make style readable from table=median,
+	make style readable from table=lower notch,
+	make style readable from table=upper notch,
+}
+\makeatother
+
+\pgfplotstableread{
+	lw lq med  uq uw
+%	0.1	0.24548	13.03824	27.43064	44.38976
+%	5.638208	10.32568	21.82664	45.42544	50.5128
+%	31.95376	105.9824	164.57424	212.26576	253.04224
+50.38423091	102.2391154	249.7294915	702.0973896	2735.336172
+43.13177965	79.93398227	178.4772665	417.9168213	1032.139507
+60.22857319	130.7835224	307.5999876	761.3087443	1914.449132
+42.04711527	76.6430543	184.4680979	499.2452378	1501.097189
+40.49543634	72.838193	167.662729	395.2668114	764.4740583
+45.62291698	86.74882036	198.1892168	478.4067264	1182.453581
+37.05531621	59.66286591	122.9512354	302.9388677	989.5142445
+34.38971051	53.49221767	108.3598387	247.314834	563.5862576
+39.73137303	70.78974008	174.0026409	491.465907	1547.569209
+38.62573882	70.01478645	169.6676549	378.6621234	791.3429479
+41.41384432	76.89926594	181.9673186	392.0041414	783.130934
+46.86813187	94.05400945	242.6964312	958.6419753	3814.838684
+37.5	62.79724656	140.9836066	378.9473684	933.5164835
+}\datatable
+
+\pgfplotstableread{
+	x y
+1	25.00057095
+1	27.26563331
+1	29.57968976
+1	31.96714928
+1	34.39171637
+1	36.9449768
+1	39.46209299
+1	42.10779951
+1	44.71648158
+1	47.57283816
+1	50.38422166
+1	3168.589692
+1	3702.50575
+1	4365.934723
+1	5252.912548
+1	6506.97644
+1	8407.385738
+1	12106.66494
+1	19303.05836
+1	38004.2397
+1	581320.8333
+2	25.00011116
+2	26.60830879
+2	28.22124611
+2	29.94394908
+2	31.6680417
+2	33.41088031
+2	35.25519159
+2	37.0976265
+2	39.05065743
+2	41.08960434
+2	43.13171652
+2	1032.217435
+2	1130.971159
+2	1257.074594
+2	1425.624994
+2	1649.351659
+2	1964.934944
+2	2479.311717
+2	3330.055858
+2	5633.888511
+2	12603.01627
+3	25.00219776
+3	28.14182189
+3	31.39019866
+3	34.73984377
+3	38.0489877
+3	41.56427051
+3	45.09401526
+3	48.81786994
+3	52.58253051
+3	56.40859356
+3	60.22820059
+3	2109.818182
+3	2347.826802
+3	2663.285851
+3	3057.040111
+3	3592.878556
+3	4382.956016
+3	5663.508323
+3	8004.047228
+3	13939.26261
+4	25.00040685
+4	26.58989614
+4	28.11215308
+4	29.77976655
+4	31.36154888
+4	33.02710458
+4	34.84731845
+4	36.58572334
+4	38.36952218
+4	40.22198788
+4	42.04652212
+4	1501.206144
+4	1680.01642
+4	1888.574652
+4	2168.138708
+4	2522.273585
+4	3012.237725
+4	3729.427016
+4	4710.102582
+4	6600.500928
+4	11193.46701
+4	185216.0494
+5	25.00177721
+5	26.42262472
+5	27.75158071
+5	29.14087126
+5	30.61132758
+5	32.07634772
+5	33.63261205
+5	35.24690903
+5	36.99341556
+5	38.74234605
+5	40.49501846
+5	764.4806677
+5	810.84506
+5	862.5610485
+5	934.4576626
+5	1029.727039
+5	1148.769233
+5	1337.401569
+5	1635.18157
+5	2221.765372
+5	3802.84413
+5	170447.2337
+6	25.00055527
+6	26.8982164
+6	28.77241036
+6	30.73408656
+6	32.74563714
+6	34.77309472
+6	36.90312517
+6	39.11762804
+6	41.22682479
+6	43.38051282
+6	45.62283366
+6	1307.146685
+6	1460.870104
+6	1649.628491
+6	1884.26011
+6	2249.90313
+6	2693.361512
+6	3195.584187
+6	4335.277862
+6	8347.473404
+7	25
+7	26.0672914
+7	27.24180741
+7	28.38174619
+7	29.52634704
+7	30.68960853
+7	31.90623929
+7	33.14687899
+7	34.37983882
+7	35.67307574
+7	37.0549237
+7	989.5247674
+7	1113.095876
+7	1274.938893
+7	1498.568115
+7	1843.723842
+7	2403.422877
+7	3438.040865
+7	5459.301228
+7	8362.132964
+7	13772.48384
+7	151666.474
+8	25.00405872
+8	25.8590512
+8	26.65056866
+8	27.54031837
+8	28.42721101
+8	29.39676924
+8	30.38748493
+8	31.34311896
+8	32.32836919
+8	33.37719062
+8	34.38537055
+8	563.6192503
+8	623.6864938
+8	685.6590066
+8	762.9925812
+8	872.2689975
+8	1025.897373
+8	1221.829149
+8	1561.673961
+8	2221.026268
+8	4157.558835
+8	131340.5347
+9	25.00235341
+9	26.35306344
+9	27.63027529
+9	28.94187084
+9	30.35642155
+9	31.78294574
+9	33.31904628
+9	34.88697468
+9	36.48451468
+9	38.11564372
+9	39.73137291
+9	1547.587618
+9	1761.641276
+9	2066.529326
+9	2474.268931
+9	2987.953842
+9	3765.271957
+9	5011.389594
+9	6986.041602
+9	10931.97593
+9	21211.35871
+10	25.0024861
+10	26.17950299
+10	27.48595162
+10	28.79221805
+10	30.03011376
+10	31.37725862
+10	32.70324347
+10	34.16473783
+10	35.64075732
+10	37.08455224
+10	852.834098
+10	936.5022049
+10	1055.388074
+10	1216.562563
+10	1454.108885
+10	1809.22619
+10	2341.368205
+10	3669.746678
+10	8533.099141
+11	25.0003816
+11	26.51614782
+11	28.07596883
+11	29.62132063
+11	31.09632238
+11	32.69957723
+11	34.32654206
+11	35.9956216
+11	37.8121109
+11	39.65320233
+11	835.3053242
+11	902.4998329
+11	980.546726
+11	1085.18482
+11	1209.916817
+11	1377.877657
+11	1640.0012
+11	2102.774549
+11	3358.076116
+12	25.00021059
+12	26.8601346
+12	28.83945748
+12	30.86112524
+12	32.95198857
+12	35.04395334
+12	37.20271801
+12	39.45546122
+12	41.85431334
+12	44.29400318
+12	4303.517461
+12	4951.523007
+12	5711.27451
+12	6702.487831
+12	7952.368758
+12	9704.242424
+12	12581.03672
+12	18466.27931
+12	32944.73333
+12	376861.5385
+13	25
+13	26.31578947
+13	27.56410256
+13	28.76106195
+13	30.10752688
+13	31.08108108
+13	32.27272727
+13	33.5483871
+13	34.92063492
+13	36.18421053
+13	952.892562
+13	993.4782609
+13	1112.5
+13	1250
+13	1431.818182
+13	1700
+13	2005.785124
+13	2600
+13	3700
+}\outlierdatatable
+
+% \definecolor{palette1}{RGB}{215,25,28}
+% \definecolor{palette2}{RGB}{253,174,97}
+% % \definecolor{palette3}{RGB}{255,255,191}
+% \definecolor{palette3}{RGB}{208,28,139}
+% \definecolor{palette4}{RGB}{184,225,134}
+% % \definecolor{palette4}{RGB}{171,221,164}
+% \definecolor{palette5}{RGB}{43,131,186}
+% \definecolor{palette6}{RGB}{208,28,139}
+
+% green -- blueish
+% \definecolor{palette1}{RGB}{0,109,44}
+% \definecolor{palette2}{RGB}{44,162,95}
+% \definecolor{palette3}{RGB}{67,162,202}
+% \definecolor{palette4}{RGB}{8,104,172}
+% \definecolor{palette5}{RGB}{8,81,156}
+
+\definecolor{myred}{RGB}{202,0,32}
+\definecolor{myorange}{RGB}{244,165,130}
+\definecolor{myviolet}{RGB}{194,165,207}
+\definecolor{mycyan}{RGB}{146,197,222}
+\definecolor{myblue}{RGB}{5,113,176}
+\definecolor{mygreen}{RGB}{127,191,123}
+\definecolor{mytile}{RGB}{27,120,55}
+\definecolor{myblack}{RGB}{60,60,60}
+% \definecolor{palette3}{RGB}{247,247,247}
+
+
+% \documentclass{standalone}
+\usepackage{pgfplots}
+% Nice color sets, see see http://colorbrewer2.org/	
+\usepgfplotslibrary{colorbrewer}
+% initialize Set1-4 from colorbrewer (we're comparing 4 classes),
+\pgfplotsset{compat = 1.15, cycle list/Set1-8} 
+% Tikz is loaded automatically by pgfplots
+\usetikzlibrary{pgfplots.statistics, pgfplots.colorbrewer} 
+% provides \pgfplotstabletranspose
+\usepackage{pgfplotstable}
+\usepackage{filecontents}
+
+\begin{document}
+
+%\begin{tikzpicture}[font=\sffamily]
+\begin{tikzpicture}
+	
+\begin{axis}[
+    ymode = log,
+    boxplot/draw direction=y,
+    ymax    = 6000,
+    ymin    = 10,  % y/100 = gamma
+    xmax    = 13.5,%12.5,
+    xmin    = 0.5,
+    width   =  7 cm,
+    height  =  2.5 cm,
+    scale only axis = true,
+    xtick align = inside,
+    % bar width   = 1pt,
+    % enlarge x limits = auto,
+    % xticklabel style = {
+    %     font=\small,
+    %     % at={(current axis.north west)},
+    %     % rotate=-90,
+    %     % xshift=-1ex,
+    %     yshift = 2pt,
+    % },
+    tick label style={/pgf/number format/assume math mode=true},
+    xtick = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13},
+    xticklabels = {R1,2,3,4,5, R6,7,8,9,10,11,R12,13},
+    ytick = {10, 100, 1000, 10000}, 
+    yticklabels = {0.1, 1, 10, 100},
+    % ytick = { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000},
+    %yticklabels = {10, , , , , , , , , 100, , , , , , , , , 1000, , , , 5000},
+    % yticklabels = {10, , , , , , , , , 100, , , , , , , , , 1000, , , , 5000},
+    %ytick = {5, 10, 100, 1000}, 
+    %yticklabels = {0, 10, 100, 1000},  
+    %ytick = {1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400},
+    %yticklabels =   {1, 10, , , , , , , , , 100, , , 400},
+    %xticklabel style = {font=\small},
+    %yticklabel style = {font=\small},
+    boxplot/variable width,
+    boxplot/box extend=0.5,
+    % % xticklabel pos=right,
+    % xtick pos = left,
+    % ytick pos = left,
+    % % yticklabel pos=right,
+    % % enlargelimits=0.15,
+    legend style={
+        %at      = {(1.03, 1.0)},
+        font    = \normalsize,
+        fill    = none,
+        draw    = none,
+        anchor  = south east,
+        legend cell align   = left,
+        legend columns      = 1,
+    },
+    ylabel={$\gamma_{speed}$ {\small (log-scale)}},
+    %xlabel={BW \small{(MHz)}},
+    xticklabel style={
+        yshift = 3pt,
+    },
+        xlabel style={
+        %font=\small,
+        % at={(current axis.north west)},
+        % rotate=-90,
+       % xshift= -10pt,
+        yshift = 5pt,
+    },
+    ylabel style={
+        %font=\small,
+        % at={(current axis.north west)},
+        % rotate=-90,
+        %text width=2.8cm,
+        align=center,
+        xshift=0pt,
+        yshift = -8 pt,
+    },
+legend style={
+	at      = {(0.95, 0.7)},
+	font    = \normalsize,
+	fill    = none,
+	draw    = none,
+	anchor  = south east,
+	legend cell align   = left,
+	legend columns      = 1,
+},
+%    xlabel style={
+%        font=\large,
+%        % at={(current axis.north west)},
+%        % rotate=-90,
+%        % xshift=-1ex,
+%        xshift = 0 pt,
+%        yshift = 3pt,
+%    },
+    % symbolic x coords={att, tmo, sprint, cmcc, fi},
+    % xticklabels={AT\&T, T-Mobile, Sprint, China Mobile, Google-Fi},
+    % xtick=data,
+    % nodes near coords,
+    % nodes near coords align={vertical},
+    ]
+    
+%		\foreach \n in {1,...,3} {
+%			\addplot+[boxplot, fill, draw=black] table[y index=\n] {\datatransposed};
+%		}    
+
+\pgfplotstablegetrowsof{\datatable}
+\pgfmathtruncatemacro\TotalRows{\pgfplotsretval-1}
+\pgfplotsinvokeforeach{0,...,\TotalRows}
+{
+	\addplot+[
+	boxplot prepared from table={
+		table=\datatable,
+		row=#1,
+		lower whisker=lw,
+		upper whisker=uw,
+		lower quartile=lq,
+		upper quartile=uq,
+		median=med
+	},
+	boxplot prepared={
+		every box/.style={thick,black,solid},
+		every whisker/.style={very thin,black,solid},
+		every median/.style={very thick,blue,solid},},
+	% to get a more useful legend
+	area legend
+	]
+	coordinates {};
+	% add legend entry 
+	%\pgfplotstablegetelem{#1}{name}\of\datatable
+	%\addlegendentryexpanded{\pgfplotsretval}
+}
+
+%\node[text=black] at (axis cs:2,260) {\bf 1};
+%\node[text=black] at (axis cs:6,260) {\bf 2};
+%\node[text=black] at (axis cs:10,260) {\bf 3};
+%\node[text=black] at (axis cs:14,260) {\bf 4};
+%\node[text=black] at (axis cs:18,260) {\bf 5};
+%\node[text=black] at (axis cs:22,260) {\bf 6};
+%\node[text=black] at (axis cs:26,260) {\bf 7};
+%\node[text=black] at (axis cs:30,260) {\bf 8};
+%\node[text=black] at (axis cs:34,260) {\bf 9};
+%\node[text=black] at (axis cs:38,260) {\bf 10};
+%\node[text=black] at (axis cs:42,260) {\bf 11};
+%\node[text=black] at (axis cs:46,260) {\bf 12};
+%\node[text=black] at (axis cs:50,260) {\bf 13};
+
+\addplot[only marks,draw=black,fill=white,mark=*,mark size=1pt,fill opacity=0.2] table[x=x,y=y] \outlierdatatable;
+
+\addplot+[mark=none, densely dashed,gray,line width=0.2pt] coordinates {(-1,100) (13,100)};
+%\node[,right] at (axis cs: 1.25, 400) {\small 300 Mbps};
+
+% replot median in RED
+%\addplot+[mark=none, very thick,solid,red] coordinates {(0.75,13.3) (1.25,13.3)};
+%\addplot+[mark=none, very thick,solid,red] coordinates {(1.75,23.9) (2.25,23.9)};
+%\addplot+[mark=none, very thick,solid,blue] coordinates {(2.75,165.1) (3.25,165.1)};
+
+
+%\draw[gray,densely dashed,->,line width=0.2pt] (axis cs:1.25,13) -- (axis cs: 1.5,1.5);
+%\node[,right] at (axis cs: 1.25,1.5) {\small 13.0};
+%\draw[gray,densely dashed,->,line width=0.2pt] (axis cs:2.75,21.8) -- (axis cs: 3,6);
+%\node[,right] at (axis cs: 2,6) {\small 21.8};
+%\node[,right] at (axis cs: 1,300) {\small 164.5};
+
+%\addplot+[mark=none, densely dashed,red,line width=0.2pt] coordinates {(0,13.3) (1.25,13.3)};
+%\addplot+[mark=none, densely dashed,red,line width=0.2pt] coordinates {(2,23.9) (2.75,23.9)};
+%\addplot+[mark=none, densely dashed,blue,line width=0.2pt] coordinates {(2.25,165.1) (3.5,165.1)};
+%
+%\draw[red,densely dashed,line width=0.2pt] (axis cs:1.25,13.3) -- (axis cs: 1.5,3);
+%\node[red,right] at (axis cs: 1,2) {\small 13.3};
+%\draw[red,densely dashed,line width=0.2pt] (axis cs:2.75,23.9) -- (axis cs: 3,7);
+%\node[red,right] at (axis cs: 2,6) {\small 23.9};
+%\draw[blue,densely dashed,line width=0.2pt] (axis cs:2.25,165.1) -- (axis cs: 1.5,300);
+%\node[blue,right] at (axis cs: 1, 340) {\small 165.1};
+
+%13
+%21.8
+%164.5
+
+%\addplot+ [onlymarks,draw=black,mark=*,mark size=0.5pt,mark options={fill=black,},
+%]table[x=x,y=y] \outlierdatatable;
+%coordinates { 
+%	(1,0)
+%	(1, 100)
+%	(2, 100)
+%	(2, 100)
+%};
+
+
+\end{axis}
+\end{tikzpicture}
+
+\end{document}
+

@@ -1,0 +1,26 @@
+total_duration(h),101.027581
+total_distance(km),1349.282225
+MW Cell #,66
+MW Freq #,2
+Sub6 Cell #,17
+Sub6 Freq #,1
+5G Cell #,83
+5G Freq #,3
+LTE Cell #,332
+LTE Freq #,39
+Thput sample #,540678
+RTT sample #,0
+Handover #,14173
+MW handover #,0
+Sub6 handover #,0
+LTE handover #,302
+MW RSS num,4676
+Sub6 RSS num,15727
+LTE RSS num,9439063
+Total RSS num,9459466
+MW RSRP range,[-139.000000 -83.000000]
+MW RSRQ range,[-39.500000 -9.500000]
+Sub6 RSRP range,[-124.000000 -43.000000]
+Sub6 RSRQ range,[-25.500000 -9.500000]
+LTE RSRP range,[-167.062500 61.000000]
+LTE RSRQ range,[-30.000000 66586.000000]

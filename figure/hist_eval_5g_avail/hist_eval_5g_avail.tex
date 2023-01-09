@@ -1,0 +1,428 @@
+% Note: to use package fontspec,
+% use XeLaTeX to compile
+
+\documentclass{article}
+\usepackage{siunitx}
+% \usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{verbatim}
+%\usepackage{sansmath}
+\usepackage{blindtext}
+\usepackage[active,tightpage]{preview}
+%\usepgfplotslibrary{statistics}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{1pt}
+\usetikzlibrary{patterns}
+%\usetikzlibrary{pgfplots.statistics}
+\pgfplotsset{compat=newest}
+
+\newcommand\mtlarge{\fontsize{15pt}{18pt}\selectfont}
+%\usepackage{fontspec}
+%\setmainfont[
+%BoldFont={Arial Bold},
+%ItalicFont={Arial Italic},
+%BoldItalicFont={Arial Bold Italic}
+%]{Arial}
+
+
+\makeatletter
+\pgfplotsset{
+my filter/.style args={every#1between#2and#3}{%
+/pgfplots/x filter/.append code={%
+\ifnum\coordindex<#2%
+  % Nothing
+\else% Did we pass #3?
+  \ifnum\coordindex>#3%
+    %Nothing
+  \else% Ok filter is on, don't disturb \pgfmathresult for convenience
+    \pgfmathsetmacro\temp{int(mod(\coordindex,#1))}%
+    \ifnum0=\temp\relax% Are we on the nth point?
+      % Yes do nothing let it pass
+    \else% discard it
+      \let\pgfmathresult\pgfutil@empty
+    \fi%
+  \fi%
+\fi%
+}}}
+\makeatother
+
+\pgfplotsset{xtick style={draw=none}}
+
+%\usepgfplotslibrary{statistics}
+%\makeatletter
+%\pgfplotsset{
+%	boxplot prepared from table/.code={
+%		\def\tikz@plot@handler{\pgfplotsplothandlerboxplotprepared}%
+%		\pgfplotsset{
+%			/pgfplots/boxplot prepared from table/.cd,
+%			#1,
+%		}
+%	},
+%	/pgfplots/boxplot prepared from table/.cd,
+%	table/.code={\pgfplotstablecopy{#1}\to\boxplot@datatable},
+%	row/.initial=0,
+%	make style readable from table/.style={
+%		#1/.code={
+%			\pgfplotstablegetelem{\pgfkeysvalueof{/pgfplots/boxplot prepared from table/row}}{##1}\of\boxplot@datatable
+%			\pgfplotsset{boxplot/#1/.expand once={\pgfplotsretval}}
+%		}
+%	},
+%make style readable from table=draw position,
+%	make style readable from table=lower whisker,
+%	make style readable from table=upper whisker,
+%	make style readable from table=lower quartile,
+%	make style readable from table=upper quartile,
+%	make style readable from table=median,
+%	make style readable from table=lower notch,
+%	make style readable from table=upper notch
+%}
+%\makeatother
+
+%\makeatletter
+%\pgfplotsset{% basis: example on p. 262 of the pgfplots manual
+%	/pgfplots/area legend/.style={
+%		/pgfplots/legend image code/.code={
+%			\draw[#1] (0cm,0.15em) rectangle (0.6*\pgfplotbarwidth,-0.15em);
+%		}, },
+%}
+%\makeatother
+
+\pgfplotsset{
+	compat=newest,
+	legend image code/.code={
+		\draw[mark repeat=2,mark phase=2]
+		plot coordinates {
+			(0cm,0cm)
+			(0.3cm,0cm)        %% default is (0.3cm,0cm)
+			(0.6cm,0cm)         %% default is (0.6cm,0cm)
+		};%
+	}
+}
+
+\definecolor{myred}{RGB}{202,0,32}
+\definecolor{myorange}{RGB}{244,165,130}
+\definecolor{myviolet}{RGB}{194,165,207}
+\definecolor{mycyan}{RGB}{146,197,222}
+\definecolor{myblue}{RGB}{5,113,176}
+\definecolor{mygreen}{RGB}{127,191,123}
+\definecolor{mytile}{RGB}{27,120,55}
+\definecolor{myblack}{RGB}{60,60,60}
+\definecolor{mywhite}{RGB}{250,250,250}
+\definecolor{mygray}{RGB}{210,210,210}
+% \definecolor{palette3}{RGB}{247,247,247}
+
+
+
+\begin{document}
+
+\begin{tikzpicture}
+
+\begin{axis}[
+%axis y line*=left,
+%axis x line*=middle,
+%y dir=reverse,
+width   = 6 cm,
+height  = 2.5 cm,
+ymax    = 20,
+ymin    = -20,
+xmax   = 12.5,
+xmin    = -0.5,
+scale only axis = true,
+tick label style={/pgf/number format/assume math mode=true},
+ytick = {-20, -15, -10, -5, 0, 5, 10, 15, 20},
+yticklabels = {-20, , -10, , 0, , 10, , 20},
+%yticklabel style = {font=\mtlarge},
+%xticklabel style = {font=\mtlarge},
+yticklabel style = {font=\normalsize},
+xticklabel style = {
+	%font=\footnotesize, 
+	align = center, 
+	yshift =  6 pt, 
+	rotate = 0},
+xtick={0,1,...,12},
+%xticklabels = {},
+%xtick={3, 8, 13, 18, 23, 28, 33, 38, 43, 48, 53, 59},
+%xtick={2.5,11.5,20.5,29.5,38.5,47.5,56.50,65.50,74.50,83.50,92.50,101.5,110.5,119.5},
+%xticklabels = { 5145 \\ (742.5) , 2425 \\(871.5), 850 \\(1955 ), 1075 \\(1977.5), 1125 \\ (1982.5), 1150 \\)(1985), 2000\\(2115), 66486\\(2115), 2175\\(2132.5), 66661\\(2132.5), 66911\\(2157.5), 66936\\(2160), 9820\\(2355), 9840\\(2357)},
+%xticklabels = { 5145\\(742.5) , , 850 \\(1955), , 1125\\(1982.5), , 2000\\(2115), , 2175\\(2132.5), , 66911\\(2157.5), , 9820\\(2355MHz), },
+%xticklabels={R1,R2,R3,R4,R5},
+%xticklabels={R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11,R12,R13},
+xticklabels={R1,2,3,4,5, R6,7,8,9,10,11,R12,13},
+%xticklabels={675,850,1025,5110,5330,9820,9840,66486,66661,66686,66936,67086},
+%xticklabels={,850,,5110,,9820,,66486,,66686,,67086},
+ylabel={Percentage (\%)},
+ylabel style={
+	%font=\small,
+	xshift= 0 pt,
+	yshift =  -7 pt,
+},
+%xlabel={Frequency Channel ID},
+xlabel style={
+	%font=\small,
+%	xshift= 0 pt,
+	yshift =  4 pt;
+ 	align=center
+},
+%enlargelimits=0.015,
+ybar,
+%ybar interval,
+%ybar stacked,
+bar width= 2.5 pt,
+legend style={
+	%pos=outer north west, 
+	at      = {(0.83, 0.97)},
+	%font    = \mtlarge,
+	%font    = \footnotesize, 
+	%\normalsize,
+	fill    = none,
+	draw    = none,
+%	anchor  = south east,
+	legend cell align   = left,
+	legend columns      = 3,
+},
+%nodes near coords={\pgfmathprintnumber[fixed, precision=2]{\pgfplotspointmeta}},
+%every node near coord/.append style={yshift=-10pt,font=\footnotesize,anchor=center,},
+]
+
+
+%
+%\addplot+[
+%red,
+%line width=0.7pt,
+%%color=blue,
+%fill=red,
+%]
+%table[
+%x expr = \thisrowno{0},
+%y expr = \thisrowno{1},
+%] {for_legend_freq_v4.dat};
+%\addplot+[
+%blue,
+%line width=0.7pt,
+%%color=blue,
+%fill=white,
+%postaction={
+%	pattern=north west lines,
+%	%pattern=horizontal lines,
+%	pattern color=blue,
+%}
+%]
+%table[
+%x expr = \thisrowno{0},
+%y expr = \thisrowno{1},
+%] {for_legend_freq_v4.dat};
+
+% plottting content
+
+
+%\draw [fill=mygray, mygray, opacity=0.5] (0.5,0) rectangle (1.5,35);
+%% band 12
+%\node[myblack,center] at (1,22){\small B12};
+%\draw [fill=mywhite,mywhite] (1.5,0) rectangle (2.5,35);
+%% band 5
+%\node[myblack,center] at (2,22){\small B5};
+%\draw [fill=mygray, mygray, opacity=0.5] (2.5,0) rectangle (6.5,35);
+%% band 2
+%\node[myblack,center] at (4.5,22){\small B2};
+%\draw [fill=mywhite,mywhite] (6.5,0) rectangle (10.5,35);
+%%band 4/66
+%\node[myblack,center] at (8.5,22){\small B4/B66};
+%\draw [fill=mygray, mygray, opacity=0.5] (10.5,0) rectangle (12.5,35);
+%% band 66
+%\node[myblack,center] at (11.5,22){\small B66};
+%\draw [fill=mywhite,mywhite] (12.5,0) rectangle (14.5,35);
+%\node[myblack,center] at (13,22){\small B30};
+%%band 30
+
+%\draw [fill=mygray, mygray, opacity=0.5] (-0.5,0) rectangle (2.5,120);
+%% band 2
+%\node[myblack,center] at (1,110){\small b2};
+%\draw [fill=mywhite,mywhite] (2.5,1) rectangle (3.5,119);
+%% band 12
+%\node[myblack,center] at (3,110){\small 12};
+%\draw [fill=mygray, mygray, opacity=0.5] (3.5,0) rectangle (4.5,120);
+%% band 14
+%\node[myblack,center] at (4,110){\small 14};
+%\draw [fill=mywhite,mywhite] (4.5,1) rectangle (6.5,119);
+%% band 30
+%\node[myblack,center] at (5.5,110){\small b30};
+%\draw [fill=mygray, mygray, opacity=0.5] (6.5,0) rectangle (11.5,120);
+%% band 66
+%\node[myblack,center] at (7.5,110){\small b66};
+
+\draw [fill=mygray, opacity=0.1] (-0.5,-20) rectangle (0.5,20);
+\draw [fill=mygray, opacity=0.1] (1.5,-20) rectangle (2.5,20);
+\draw [fill=mygray, opacity=0.1] (3.5,-20) rectangle (4.5,20);
+\draw [fill=mygray, opacity=0.1] (5.5,-20) rectangle (6.5,20);
+\draw [fill=mygray, opacity=0.1] (7.5,-20) rectangle (8.5,20);
+\draw [fill=mygray, opacity=0.1] (9.5,-20) rectangle (10.5,20);
+\draw [fill=mygray, opacity=0.1] (11.5,-20) rectangle (12.5,20);
+%\draw [fill=mygray, opacity=0.1] (12.5,-20) rectangle (14.5,20);
+
+%\node[myblack,center] at (1.5,-15){{\bf \texttt{A}}};
+%%\draw [fill=mywhite,mywhite] (4.5,-19.9) rectangle (10.5,19.9);
+%\node[myblack,center] at (7.5,-15){{\bf \texttt{V}}};
+%%\draw [fill=mygray, mygray, opacity=0.5] (10.5,-20) rectangle (12.5,20);
+%\node[myblack,center] at (12,-15){{\bf \texttt{T}}};
+
+\addplot+[
+blue,
+line width=0.7pt,
+%color=blue,
+fill=blue,
+postaction={
+	pattern=north east lines,
+	%pattern=horizontal lines,
+	pattern color=blue,
+}
+]
+table[
+x expr = \thisrowno{0} * 10,
+y expr = \thisrowno{9} * 100,
+col sep=comma,
+] {rat_use_eval.csv};
+
+\addplot+[
+blue,
+line width=0.7pt,
+%color=blue,
+fill=white,
+postaction={
+	pattern=north east lines,
+	pattern color=blue,
+},
+% forget plot,
+]
+table[
+x expr = \thisrowno{0} *10 ,
+y expr = \thisrowno{10} * 100,
+col sep=comma,
+] {rat_use_eval.csv};
+
+
+
+\addplot+[
+red,
+line width=0.7pt,
+%color=blue,
+fill=white,
+%postaction={
+%	pattern=north east lines,
+%	%pattern=horizontal lines,
+%	pattern color=blue,
+%}
+]
+table[
+x expr = \thisrowno{0} *10 ,
+y expr = \thisrowno{11} * 100,
+col sep=comma,
+] {rat_use_eval.csv};
+
+
+%\addplot+[
+%black,
+%line width=0.8pt,
+%fill=white,
+% postaction={
+% 	pattern=north west lines,
+% 	pattern color= black,
+% }
+%]
+%table[
+%table[
+%x expr = \thisrowno{0},
+%y expr = \thisrowno{12}*100,
+%] {freq_cell_distribution-v2.txt};
+
+%bands: 12, 5, 2, 2, 2, 2, 4, 66, 4, 66, 66, 66, 30, 30
+%\node[myblack,center] at (2,16){\footnotesize2425};
+%\node[gray,center] at (2,13){\footnotesize(871.5)};
+%\node[myblack,center] at (4,6){\footnotesize1075};
+%\node[gray,center] at (4,3){\footnotesize(1977.5)};
+%\node[myblack,center] at (6,15){\footnotesize1150};
+%\node[gray,center] at (6,12){\footnotesize(1985)};
+%\node[myblack,center] at (8,19){\footnotesize66486};
+%\node[gray,center] at (8,16){\footnotesize(2115)};
+%\node[myblack,center] at (10,15){\footnotesize66661};
+%\node[gray,center] at (10,12){\footnotesize(2132.5)};
+%\node[myblack,center] at (12,15){\footnotesize66936};
+%\node[gray,center] at (12,12){\footnotesize(2160)};
+%\node[myblack,center] at (14,6){\footnotesize9840};
+%\node[gray,center] at (14,3){\footnotesize(2357)};
+
+%\addplot+[mark=none, solid,black,line width=1pt] coordinates {(-0.5,0) (12.5,0)};
+
+%xticklabels = { 5145 \\ (742.5) , 2425 \\(871.5), 850 \\(1955 ), 1075 \\(1977.5), 1125 \\ (1982.5), 1150 \\)(1985), 2000\\(2115), 66486\\(2115), 2175\\(2132.5), 66661\\(2132.5), 66911\\(2157.5), 66936\\(2160), 9820\\(2355), 9840\\(2357)},
+
+\legend{5GM,5GS,4G}
+
+%\legend{PCell, SCell, P+SCell, All}
+\end{axis}
+
+%\begin{axis}[
+%axis y line*=right,
+%axis x line*=middle,
+%%y dir=reverse,
+%width   = 10cm,
+%height  = 2.5cm,
+%ymax    = 8,
+%ymin    = 0,
+%xmax   = 14,
+%xmin    = 1,
+%scale only axis = true,
+%%y dir=reverse,
+%scale only axis = true,
+%tick label style={/pgf/number format/assume math mode=true},
+%ytick = {0,2,...,8},
+%%yticklabels = {10,0},
+%yticklabel style = {font=\normalsize},
+%yticklabels={,,},
+%xticklabels={,,},
+%% ylabel={$\Gamma$},
+%ylabel style={
+%	font=\normalsize,
+%%	xshift= -35 pt,
+%	yshift =  3 pt,
+%	rotate=180,
+%},
+%%ybar interval,
+%%ybar,
+%%bar width=9 pt,
+%legend style={
+%	at      = {(1, 0.62)},
+%	font    = \normalsize,
+%	fill    = none,
+%	draw    = none,
+%	anchor  = south east,
+%	legend cell align   = left,
+%	legend columns      = 1,
+%},
+%nodes near coords={\pgfmathprintnumber[fixed, precision=2]{\pgfplotspointmeta}},
+%%every node near coord/.append style={yshift=-10pt,font=\footnotesize,anchor=center,},
+%]
+%
+%\addplot+[
+%only marks,
+%mark=*,
+%mark options={fill=white},
+%mark size=0.8pt,
+%%        loosely dotted,
+%%	densely dotted,
+%%	smooth,
+%color       = black,
+%line width  = 0pt,
+%%        line cap    = round,
+%%        line join   = round,
+%%each nth point={1},
+%]
+%table[
+%x expr = \thisrowno{0}-0.5,
+%y expr = \thisrowno{2},
+%] {freq_cell_distribution.txt};
+%\legend{$\Gamma$}
+%\end{axis}
+
+\end{tikzpicture}
+
+\end{document}

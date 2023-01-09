@@ -1,0 +1,283 @@
+% Template for a CDF graph
+%
+% Author: Zengwen Yuan
+% Version: 1.0  2017-03-08 init version
+% Note: to use package fontspec,
+% use XeLaTeX to compile
+
+\documentclass{article}
+\usepackage{siunitx}
+% \usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+%\usepackage{verbatim}
+\usepackage{sansmath}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{1pt}
+\usetikzlibrary{patterns}
+
+\pgfplotsset{compat=newest}
+
+%\usepackage{fontspec}
+%\setmainfont[
+%BoldFont={Arial Bold},
+%ItalicFont={Arial Italic},
+%BoldItalicFont={Arial Bold Italic}
+%]{Arial}
+
+% # user-study-sync-overhead-context-tx-v2.txt
+%\pgfplotstableread{
+%0   0
+%1000   0.1
+%5000   0.8
+%10000   0.95
+%20000   1
+%}{\fakedata}
+
+\makeatletter
+\pgfplotsset{
+my filter/.style args={every#1between#2and#3}{%
+/pgfplots/x filter/.append code={%
+\ifnum\coordindex<#2%
+  % Nothing
+\else% Did we pass #3?
+  \ifnum\coordindex>#3%
+    %Nothing
+  \else% Ok filter is on, don't disturb \pgfmathresult for convenience
+    \pgfmathsetmacro\temp{int(mod(\coordindex,#1))}%
+    \ifnum0=\temp\relax% Are we on the nth point?
+      % Yes do nothing let it pass
+    \else% discard it
+      \let\pgfmathresult\pgfutil@empty
+    \fi%
+  \fi%
+\fi%
+}}}
+\makeatother
+
+\pgfplotsset{
+    compat=newest,
+    legend image code/.code={
+        \draw[mark repeat=2,mark phase=2]
+        plot coordinates {
+            (0cm,0cm)
+            (0.15cm,0cm)        %% default is (0.3cm,0cm)
+            (0.3cm,0cm)         %% default is (0.6cm,0cm)
+        };%
+    }
+}
+
+% \definecolor{palette1}{RGB}{215,25,28}
+% \definecolor{palette2}{RGB}{253,174,97}
+% % \definecolor{palette3}{RGB}{255,255,191}
+% \definecolor{palette3}{RGB}{208,28,139}
+% \definecolor{palette4}{RGB}{184,225,134}
+% % \definecolor{palette4}{RGB}{171,221,164}
+% \definecolor{palette5}{RGB}{43,131,186}
+% \definecolor{palette6}{RGB}{208,28,139}
+
+% green -- blueish
+% \definecolor{palette1}{RGB}{0,109,44}
+% \definecolor{palette2}{RGB}{44,162,95}
+% \definecolor{palette3}{RGB}{67,162,202}
+% \definecolor{palette4}{RGB}{8,104,172}
+% \definecolor{palette5}{RGB}{8,81,156}
+
+\definecolor{myred}{RGB}{202,0,32}
+\definecolor{myorange}{RGB}{244,165,130}
+\definecolor{myviolet}{RGB}{194,165,207}
+\definecolor{mycyan}{RGB}{146,197,222}
+\definecolor{myblue}{RGB}{5,113,176}
+\definecolor{mygreen}{RGB}{127,191,123}
+\definecolor{mytile}{RGB}{27,120,55}
+\definecolor{myblack}{RGB}{60,60,60}
+% \definecolor{palette3}{RGB}{247,247,247}
+
+\begin{document}
+
+\begin{tikzpicture}
+\begin{axis}[
+    table/col sep=comma,
+    xmin    = 0.5,
+    xmax    = 250,
+    ymin    = 0,
+    ymax    = 100,
+    width   = 1.55 cm,
+    height  = 2 cm,
+    xmode=log,
+    scale only axis = true,
+    xtick align = inside,
+    tick label style={/pgf/number format/assume math mode=true},
+%    xtick = {0.1, 1, 10, 100},
+%    xticklabel = {0, 1, 10, 100},
+    xtick = {0.5,1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200},
+    xticklabels =   {0,1,,,,,,,,, 10, , , , , , , , , 100, ,},
+    %xtick = {0.5, 1, 10, 100},
+    %xticklabels =   {,1, 10, 100},
+    ytick = {0, 25, ..., 100},
+        xticklabel style = {
+    	font=\normalsize,
+	xshift = 0pt,
+        yshift = 3pt,
+    },
+    yticklabel style = {font=\normalsize},
+    yticklabels = {,,},
+    % % xticklabel pos=right,
+    % xtick pos = left,
+    % ytick pos = left,
+    % % yticklabel pos=right,
+    % % enlargelimits=0.15,
+    legend style={
+        at      = {(0.65,0.0)},
+        font    = \small,
+        fill    = none,
+        draw    = none,
+        anchor  = south,
+        legend cell align   = left,
+        legend columns      = 1,
+        samplen = 10pt, 
+    },
+    ylabel={},%CDF (\%)},
+    ylabel style={
+	   font=\normalsize,
+           yshift = -10 pt,
+           %xshift = -8 pt,
+    },
+    xlabel={\# of cells},
+    xlabel style={
+        font=\normalsize,
+        % at={(current axis.north west)},
+        % rotate=-90,
+        % xshift=-1ex,
+        xshift = 0pt,
+        yshift = 5pt,
+    },
+]
+
+\addplot+[
+no markers,
+%solid, 
+dashed,
+%smooth,
+color       = blue,
+line width  = 1.5pt,
+line cap    = round,
+line join   = round,
+each nth point={1},
+]
+table[
+x expr = \thisrowno{0},
+y expr = \thisrowno{1}*100,
+] {V-R10_mw_cell_num_cdf.csv};
+
+\addplot+[
+no markers,
+solid, 
+%dashed,
+%smooth,
+color       = black,
+line width  = 1.5pt,
+line cap    = round,
+line join   = round,
+each nth point={1},
+]
+table[
+x expr = \thisrowno{0},
+y expr = \thisrowno{1}*100,
+] {V-R10_sub6_cell_num_cdf.csv};
+%{A-R1_thput_cdf_picked_grid_0405-0930_5gm_lte_310410_0.0005_0_0_short.csv};
+%{A-R1_thput_cdf_picked_grid_0407_0807_5gm_lte_310410_0.0005_0_0_short.csv};
+
+\addplot+[
+no markers,
+%solid, 
+dotted,
+%smooth,
+color       = red,
+line width  = 1.5pt,
+line cap    = round,
+line join   = round,
+each nth point={1},
+]
+table[
+x expr = \thisrowno{0},
+y expr = \thisrowno{1}*100,
+] {V-R10_lte_cell_num_cdf.csv};
+
+%node[right,draw,align=left] {here\\ test}  -- (axis cs:300,80);
+  
+%\draw(axis cs:250,90) circle[radius=20];
+%\draw(axis cs:320,95) circle[radius=10];
+%\draw(axis cs:120,92,rotate=50) circle[radius=1.5mm];
+%\draw[->,shorten >=1mm,shorten <=1mm] (rel axis cs:300,90) 
+%\node[text=gray,align=left] at (axis cs:340,75) {\em covered \\by 5G$_m$};
+%\node[text=gray,align=left] at (axis cs:60,90) {\em w/o \\5G$_m$};
+
+%\draw[rotate=30,red,axis cs:300,90] circle(2cm and 1cm);
+
+%\addplot+[mark=none,dashed,gray,line width=0.2pt] coordinates {(0,50) (80,50)};
+%\addplot+[mark=none,dashed,gray,line width=0.2pt] coordinates {(0,90) (500,90)};
+
+\legend{5GM, 5GS,4G};
+%\legend{4G only, 4G+$5G_s$,4G+$5G_m$};
+%\legend{4G+$5G_m$,4G+$5G_s$,4G only};
+%\legend{Set};
+
+\end{axis}
+
+%\begin{axis}[
+%	table/col sep=comma,
+%	xmin    = 0,
+%	xmax    = 20,
+%	ymin    = 0,
+%	ymax    = 100,
+%	width   = 2 cm,
+%	height  = 2 cm,
+%	axis y line=none,
+%	axis x line=top,
+%	scale only axis = true,
+%	xtick align = inside,
+%	tick label style={/pgf/number format/assume math mode=true},
+%	xtick = {0, 10, ..., 20},
+%	ytick = {0, 50, ..., 100},
+%	xticklabel style = {font=\normalsize},
+%	yticklabel style = {font=\normalsize},
+%	%yticklabels = {,,},
+%	% % xticklabel pos=right,
+%	% xtick pos = left,
+%	% ytick pos = left,
+%	% % yticklabel pos=right,
+%	% % enlargelimits=0.15,
+%	legend style={
+%		at      = {(0.72, -0.05)},
+%		font    = \small,
+%		fill    = none,
+%		draw    = none,
+%		anchor  = south,
+%		legend cell align   = left,
+%		legend columns      = 1,
+%		samplen = 10pt, 
+%	},
+%	ylabel={CDF (\%)},
+%	ylabel style={
+%		font=\normalsize,
+%		yshift = -10 pt,
+%		%xshift = -8 pt,
+%	},
+%	xlabel={5G cell \#},
+%	xlabel style={
+%		font=\normalsize,
+%		% at={(current axis.north west)},
+%		% rotate=-90,
+%		% xshift=-1ex,
+%		xshift = 0pt,
+%		yshift = -5pt,
+%	},
+%	]
+%	
+%\end{axis}
+
+\end{tikzpicture}
+
+\end{document}

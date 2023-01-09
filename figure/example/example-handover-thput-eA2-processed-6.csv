@@ -1,0 +1,8 @@
+time,lat,lon,pcell_cid,pcell_freq,nrcell_cid,nrcell_freq,scell1_cid,scell1_freq,scell2_cid,scell2_freq,scell3_cid,scell3_freq,nr_scell1_cid,nr_scell1_freq,nr_scell2_cid,nr_scell2_freq,nr_scell3_cid,nr_scell3_freq,cell_set_type,cell_set_type_v2,throughput,rtt,disruption,thput_confidence_level,bw,time_delta,cell_num,width,avg_speed
+1640549450,-86.16177722,39.76822114,369,5110,None,None,None,None,None,None,None,None,None,None,None,None,None,None,LTE,LTE,0,None,None,1,10,263.46,1,10,0.0
+1640549451,-86.16177718,39.76822117,369,5110,None,None,None,None,None,None,None,None,None,None,None,None,None,None,LTE,LTE,0,None,None,1,10,264.5300002,1,10,0.0
+1640549452,-86.16177717,39.76822117,369,5110,None,None,None,None,None,None,None,None,None,None,None,None,None,None,LTE,LTE,5.04192,None,None,1,10,265.6000001,1,10,0.67132
+1640549454,-86.16177718,39.7682212,369,5110,None,None,None,None,None,None,None,None,None,None,None,None,None,None,LTE,LTE,87.07296,None,None,1,10,266.6700001,1,10,67.378688
+1640549455,-86.16177721,39.76822122,369,5110,None,None,None,None,None,None,None,None,None,None,None,None,None,None,LTE,LTE,41.52448,None,None,1,10,267.75,1,10,56.272688
+1640549456,-86.16177723,39.76822124,369,5110,None,None,None,None,None,None,None,None,None,None,None,None,None,None,LTE,LTE,9.31536,None,None,1,10,268.8100002,1,10,24.893824000000002
+1640549457,-86.16177728,39.76822124,306,850,977,2259995,None,None,None,None,None,None,977,2261661,977,2263327,977,2264993,LTE+MW,LTE+5GM,31.95376,None,None,1,420,269.8900001,5,420,53.77412

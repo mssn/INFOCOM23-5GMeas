@@ -1,0 +1,307 @@
+% Template for a CDF graph
+%
+% Author: Zengwen Yuan
+% Version: 1.0  2017-03-08 init version
+% Note: to use package fontspec,
+% use XeLaTeX to compile
+
+\documentclass{article}
+\usepackage{siunitx}
+% \usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+%\usepackage{verbatim}
+\usepackage{sansmath}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{1pt}
+\usetikzlibrary{patterns}
+
+\newlength\figureheight
+\newlength\figurewidth
+\setlength\figureheight{11cm}
+\setlength\figurewidth{10cm}
+
+\pgfplotsset{compat=newest}
+
+%\usepackage{fontspec}
+%\setmainfont[
+%BoldFont={Arial Bold},
+%ItalicFont={Arial Italic},
+%BoldItalicFont={Arial Bold Italic}
+%]{Arial}
+
+% # user-study-sync-overhead-context-tx-v2.txt
+%\pgfplotstableread{
+%0   0
+%1000   0.1
+%5000   0.8
+%10000   0.95
+%20000   1
+%}{\fakedata}
+
+\makeatletter
+\pgfplotsset{
+	my filter/.style args={every#1between#2and#3}{%
+		/pgfplots/x filter/.append code={%
+			\ifnum\coordindex<#2%
+			% Nothing
+			\else% Did we pass #3?
+			\ifnum\coordindex>#3%
+			%Nothing
+			\else% Ok filter is on, don't disturb \pgfmathresult for convenience
+			\pgfmathsetmacro\temp{int(mod(\coordindex,#1))}%
+			\ifnum0=\temp\relax% Are we on the nth point?
+			% Yes do nothing let it pass
+			\else% discard it
+			\let\pgfmathresult\pgfutil@empty
+			\fi%
+			\fi%
+			\fi%
+}}}
+\makeatother
+
+\pgfplotsset{
+	compat=newest,
+	legend image code/.code={
+		\draw[mark repeat=2,mark phase=2]
+		plot coordinates {
+			(0cm,0cm)
+			(0.3cm,0cm)        %% default is (0.3cm,0cm)
+			(0.6cm,0cm)         %% default is (0.6cm,0cm)
+		};%
+	}
+}
+
+% \definecolor{palette1}{RGB}{215,25,28}
+% \definecolor{palette2}{RGB}{253,174,97}
+% % \definecolor{palette3}{RGB}{255,255,191}
+% \definecolor{palette3}{RGB}{208,28,139}
+% \definecolor{palette4}{RGB}{184,225,134}
+% % \definecolor{palette4}{RGB}{171,221,164}
+% \definecolor{palette5}{RGB}{43,131,186}
+% \definecolor{palette6}{RGB}{208,28,139}
+
+% green -- blueish
+% \definecolor{palette1}{RGB}{0,109,44}
+% \definecolor{palette2}{RGB}{44,162,95}
+% \definecolor{palette3}{RGB}{67,162,202}
+% \definecolor{palette4}{RGB}{8,104,172}
+% \definecolor{palette5}{RGB}{8,81,156}
+
+\definecolor{myred}{RGB}{202,0,32}
+\definecolor{myorange}{RGB}{244,165,130}
+\definecolor{myviolet}{RGB}{194,165,207}
+\definecolor{mycyan}{RGB}{146,197,222}
+\definecolor{myblue}{RGB}{5,113,176}
+\definecolor{mygreen}{RGB}{127,191,123}
+\definecolor{mytile}{RGB}{27,120,55}
+\definecolor{myblack}{RGB}{60,60,60}
+\definecolor{mygray}{RGB}{220,220,220}
+\definecolor{subregioncolor2}{RGB}{27,120,55}
+\definecolor{subregioncolor1}{RGB}{0,255,0}
+% \definecolor{palette3}{RGB}{247,247,247}
+
+%% X:Y = 23:20, but width:height = 4cm:4.53cm 
+%% So  marker's width:height = 1: (4.53/4 * 23/20) = 1: 1.3023
+%\pgfdeclareplotmark{mymark}
+%{%
+%	\path[fill=white,postaction={pattern = north east lines, pattern color=myblue}] (-\pgfplotmarksize,-\pgfplotmarksize) rectangle (\pgfplotmarksize,1.3023*\pgfplotmarksize);
+%}
+%\pgfdeclareplotmark{mygridmark}
+%{%
+%	\path[] (-\pgfplotmarksize,-\pgfplotmarksize) rectangle (\pgfplotmarksize,1.3023*\pgfplotmarksize);
+%}
+
+\pgfdeclareplotmark{mygridmark}
+{%
+%	\path[fill=mapped color] (-\pgfplotmarksize,-\pgfplotmarksize) rectangle (\pgfplotmarksize,1.3023*\pgfplotmarksize);
+\path[fill=mapped color] (-\pgfplotmarksize,-\pgfplotmarksize) rectangle (\pgfplotmarksize,1.3023*\pgfplotmarksize);
+}
+
+%R1:
+%		restrict x to domain=-86.168:-86.145,
+%		ymax    = 39.781,
+%		ymin    = 39.761,
+%		xmin = -86.168,
+%		xmax = -86.145,
+%		width   = 4cm,
+%		height  = 4.5cm,
+%		
+%0.02
+%0.023
+	
+% R4
+%%		restrict x to domain=-87.684:-87.666,
+%		ymax    = 41.886, %39.781,
+%		ymin    = 41.877, %39.761,
+%		xmin = -87.684, %-86.168,
+%		xmax = -87.666, %-86.145,
+%		width   = 3.13cm, %4cm,
+%		height  = 2.04cm, %4.53cm,
+
+
+%0.009
+%0.018
+
+% width = 0.018/0.023*4 
+\begin{document}
+	
+	
+
+
+	\begin{tikzpicture}
+		\begin{axis}[
+		%restrict x to domain=-87.684:-87.666,
+		restrict x to domain=-87.688:-87.665,
+		ymax    = 41.89, %41.886, %39.781,
+		ymin    =  41.87, %41.877, %39.761,
+		xmin = -87.688, %-87.684, 
+		xmax =-87.665, % -87.666, %-86.145,
+		width   = 4cm, %3.13cm, %4cm,
+		height  = 4.5cm, %2.04cm, %4.53cm,
+		scale only axis = true,
+		xtick align = inside,
+		axis line style={draw=mygray},
+		ticks=none,
+		colorbar,
+		colormap={gray2black}{
+			rgb255=(250, 250, 250)
+			rgb255=(0,0,255)
+			%(202,0,32)
+			%(10,10,10)
+		},
+		colormap/gray2black,
+		colorbar horizontal,
+		colorbar style={
+			xtick={0, 0.25, 0.5, 0.75, 1},
+			xticklabels={0, 25\%, 50\%, 75\%, 100\%},
+			%xticklabels={},
+			%ylabel={mw ratio},
+			%				yticklabel style={text width=0.1cm,}
+			at={(0.06,0.25)},
+			%at={(0.05,1.1)},
+			ymin=0,
+			ymax=1,
+			%				anchor=north,
+			height=0.35 cm,
+			%height=0cm,
+			width=0.825*\pgfkeysvalueof{/pgfplots/parent axis width},
+		}
+		]
+		
+			\addplot[
+			only marks,
+			mark=mygridmark,
+			mark size=1.28pt,
+			scatter,
+			scatter src=explicit,
+			point meta=explicit,
+			point meta max = 1,
+			point meta min = 0,
+			]
+			%		file {data.dat};
+			table[
+			y = grid_lon,
+			x = grid_lat,
+			meta = 5g_ratio,
+			col sep=comma,
+			]
+			{A-R4_connectivity_ratio_pixel5_20210405_20211226_310410_0.0005_0_0_0.9_0.1_grid_passed.csv};
+			%{A-R1_connectivity_ratio_pixel5_0405-1009_310410_0.0005_0_0_0.95_0.05_grid_passed_5gm.csv};
+			%{A-R1_connectivity_ratio_pixel5_0405-0930_310410_0.0005_0_0_0.95_0.05_grid_passed_5gm.csv};
+			%{A-R1_connectivity_ratio_pixel5_0407_0807_310410_0.0005_0_0_0.95_0.05_grid_passed_5gm.csv};
+			% {A-R1_connectivity_ratio_pixel5_0407_0807_310410_0.0005_0_0_area_type_matched_10_10_5gm.csv};
+			
+
+%%		restrict x to domain=-87.684:-87.666,
+%		ymax    = 41.886, %39.781,
+%		ymin    = 41.877, %39.761,
+%		xmin = -87.684, %-86.168,
+%		xmax = -87.666, %-86.145,
+%		width   = 3.13cm, %4cm,
+%		height  = 2.04cm, %4.53cm,
+
+%\draw[line width=0.3mm, black,-,>=latex] (axis cs:-86.1675,39.7652) to (axis cs:-86.145,39.7655);
+\draw[line width=0.2mm, black,-,>=latex] (axis cs:-87.684,41.886) to (axis cs:-87.666,41.886);
+\draw[line width=0.2mm, black,-,>=latex] (axis cs:-87.666,41.886) to (axis cs:-87.666,41.877);
+\draw[line width=0.2mm, black,-,>=latex] (axis cs:-87.666,41.877) to (axis cs:-87.684,41.877);
+\draw[line width=0.2mm, black,-,>=latex] (axis cs:-87.684,41.877) to (axis cs:-87.684,41.886);
+%\node[text=black] at (axis cs:-86.158,39.779) {R6 (1.9 Km x 1.4 Km)};
+\node[text=black, right] at (axis cs:-87.685,41.889) {R4 (A): 5G = $5G_s$};
+\node[text=black, right] at (axis cs:-87.685,41.887) {($5G_m$ not used)};
+
+		
+			%\pgfplotsextra{
+				%				%subregion2 R1B
+%				\draw[line width=0.3mm, subregioncolor2,-,>=latex] (axis cs:-86.166,39.7725) to (axis cs:-86.166,39.7665);
+%				\draw[line width=0.3mm, subregioncolor2,-,>=latex] (axis cs:-86.166,39.7665) to (axis cs:-86.161,39.7665);
+%				\draw[line width=0.3mm, subregioncolor2,-,>=latex] (axis cs:-86.161,39.7665) to (axis cs:-86.161,39.761);
+%				\draw[line width=0.3mm, subregioncolor2,-,>=latex] (axis cs:-86.161,39.761) to (axis cs:-86.154,39.761);
+%				\draw[line width=0.3mm, subregioncolor2,-,>=latex] (axis cs:-86.154,39.761) to (axis cs:-86.154,39.7665);
+%				\draw[line width=0.3mm, subregioncolor2,-,>=latex] (axis cs:-86.154,39.7665) to (axis cs:-86.149,39.7665);
+%				\draw[line width=0.3mm, subregioncolor2,-,>=latex] (axis cs:-86.149,39.7665) to (axis cs:-86.149,39.7705);
+%				\draw[line width=0.3mm, subregioncolor2,-,>=latex] (axis cs:-86.149,39.7705) to (axis cs:-86.151,39.7705);
+%				\draw[line width=0.3mm, subregioncolor2,-,>=latex] (axis cs:-86.151,39.7705) to (axis cs:-86.151,39.7725);
+%				\draw[line width=0.3mm, subregioncolor2,-,>=latex] (axis cs:-86.151,39.7725) to (axis cs:-86.15,39.7725) ;
+%				\draw[line width=0.3mm, subregioncolor2,-,>=latex] (axis cs:-86.15,39.7725) to (axis cs:-86.15,39.775);
+%				\draw[line width=0.3mm, subregioncolor2,-,>=latex] (axis cs:-86.15,39.775) to (axis cs:-86.157,39.775);
+%				\draw[line width=0.3mm, subregioncolor2,-,>=latex] (axis cs:-86.157,39.775) to (axis cs:-86.157,39.7725);
+%				\draw[line width=0.3mm, subregioncolor2,-,>=latex] (axis cs:-86.157,39.7725) to (axis cs:-86.166,39.7725);
+%				%\node[text=subregioncolor2] at (axis cs:-86.164,39.768) {R1B};
+% R1A
+\iffalse
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1668,39.7744) to (axis cs:-86.1668,39.768);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1668,39.768) to (axis cs:-86.1675,39.768);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1675,39.768) to (axis cs:-86.1675,39.7645);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1675,39.7645) to (axis cs:-86.166,39.7645);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.166,39.7645) to (axis cs:-86.166,39.766);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.166,39.766) to (axis cs:-86.162,39.766);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.162,39.766) to (axis cs:-86.162,39.762);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.162,39.762) to (axis cs:-86.1678,39.762);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1678,39.762) to (axis cs:-86.1678,39.761);
+%\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1678,39.761) to (axis cs:-86.1535,39.761);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1678,39.761) to (axis cs:-86.1495,39.761);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1495,39.761) to (axis cs:-86.1495,39.762);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1535,39.762) to (axis cs:-86.1495,39.762);
+%\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1535,39.761) to (axis cs:-86.1535,39.762);
+%\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1678,39.761) to (axis cs:-86.1495,39.761);
+%\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1495,39.761) to (axis cs:-86.151,39.762);
+%\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.151,39.762) to (axis cs:-86.1535,39.762);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1535,39.762) to (axis cs:-86.1535,39.7645);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1535,39.7645) to (axis cs:-86.1495,39.7645);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1495,39.7645) to (axis cs:-86.1495,39.763);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1495,39.763) to (axis cs:-86.1485,39.763);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1485,39.763) to (axis cs:-86.1485,39.769);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1485,39.769) to (axis cs:-86.149,39.769);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.149,39.769) to (axis cs:-86.149,39.7705);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.149,39.7705) to (axis cs:-86.151,39.7705);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.151,39.7705) to (axis cs:-86.151,39.7725);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.151,39.7725) to (axis cs:-86.1495,39.7725) ;
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1495,39.7725) to (axis cs:-86.1495,39.777);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1495,39.777) to (axis cs:-86.151,39.777);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.151,39.777) to (axis cs:-86.151,39.776);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.151,39.776) to (axis cs:-86.155,39.776);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.155,39.776) to (axis cs:-86.155,39.777);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.155,39.777) to (axis cs:-86.156,39.777);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.156,39.777) to (axis cs:-86.156,39.776);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.156,39.776) to (axis cs:-86.1605,39.776);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1605,39.776) to (axis cs:-86.1605,39.773);
+%\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.159,39.776) to (axis cs:-86.1545,39.776);
+%\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.157,39.775) to (axis cs:-86.157,39.7725);
+%\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.157,39.7725) to (axis cs:-86.166,39.7725);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.1605,39.773) to (axis cs:-86.166,39.773);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.166,39.773) to (axis cs:-86.166,39.7744);
+\draw[line width=0.3mm, subregioncolor1,-,>=latex] (axis cs:-86.166,39.7744) to (axis cs:-86.1668,39.7744);
+\fi
+				%\node[text=subregioncolor1] at (axis cs:-86.164,39.775) {R1A};
+				%}
+			
+		\end{axis}
+%	\pgfresetboundingbox
+%	\path
+%	(current axis.south west) -- ++(-0in,-0in)
+%	rectangle (current axis.north east) -- ++(0in,0in);
+	\end{tikzpicture}
+	
+\end{document}

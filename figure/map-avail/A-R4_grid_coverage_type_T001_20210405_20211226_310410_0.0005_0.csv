@@ -1,0 +1,4 @@
+grid_lat,grid_lon,coverage_type,total_rss_num,mw_rss_num,sub6_rss_num,lte_rss_num
+41.8825,-87.673,T001,6,0,0,6
+41.8835,-87.672,T001,3,0,0,3
+41.886,-87.6685,T001,4,0,0,4

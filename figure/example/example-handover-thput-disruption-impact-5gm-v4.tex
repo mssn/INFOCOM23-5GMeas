@@ -1,0 +1,441 @@
+% Version: 1.0  2017-03-08 init version
+% Note: to use package fontspec,
+% use XeLaTeX to compile
+
+\documentclass{article}
+\usepackage{siunitx}
+% \usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+%\usepackage{verbatim}
+%\usepackage{sansmath}
+\usepackage{blindtext}
+\usepackage[active,tightpage]{preview}
+%\usepgfplotslibrary{statistics}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{1pt}
+\usetikzlibrary{patterns}
+%\usetikzlibrary{pgfplots.statistics}
+
+\pgfplotsset{compat=newest}
+
+%\usepackage{fontspec}
+%\setmainfont[
+%BoldFont={Arial Bold},
+%ItalicFont={Arial Italic},
+%BoldItalicFont={Arial Bold Italic}
+%]{Arial}
+
+
+\makeatletter
+\pgfplotsset{
+my filter/.style args={every#1between#2and#3}{%
+/pgfplots/x filter/.append code={%
+\ifnum\coordindex<#2%
+  % Nothing
+\else% Did we pass #3?
+  \ifnum\coordindex>#3%
+    %Nothing
+  \else% Ok filter is on, don't disturb \pgfmathresult for convenience
+    \pgfmathsetmacro\temp{int(mod(\coordindex,#1))}%
+    \ifnum0=\temp\relax% Are we on the nth point?
+      % Yes do nothing let it pass
+    \else% discard it
+      \let\pgfmathresult\pgfutil@empty
+    \fi%
+  \fi%
+\fi%
+}}}
+\makeatother
+
+\pgfplotsset{xtick style={draw=none}}
+
+\usepgfplotslibrary{statistics}
+\makeatletter
+\pgfplotsset{
+	boxplot prepared from table/.code={
+		\def\tikz@plot@handler{\pgfplotsplothandlerboxplotprepared}%
+		\pgfplotsset{
+			/pgfplots/boxplot prepared from table/.cd,
+			#1,
+		}
+	},
+	/pgfplots/boxplot prepared from table/.cd,
+	table/.code={\pgfplotstablecopy{#1}\to\boxplot@datatable},
+	row/.initial=0,
+	make style readable from table/.style={
+		#1/.code={
+			\pgfplotstablegetelem{\pgfkeysvalueof{/pgfplots/boxplot prepared from table/row}}{##1}\of\boxplot@datatable
+			\pgfplotsset{boxplot/#1/.expand once={\pgfplotsretval}}
+		}
+	},
+make style readable from table=draw position,
+	make style readable from table=lower whisker,
+	make style readable from table=upper whisker,
+	make style readable from table=lower quartile,
+	make style readable from table=upper quartile,
+	make style readable from table=median,
+	make style readable from table=lower notch,
+	make style readable from table=upper notch
+}
+\makeatother
+
+\makeatletter
+\pgfplotsset{% basis: example on p. 262 of the pgfplots manual
+	/pgfplots/area legend/.style={
+		/pgfplots/legend image code/.code={
+			\draw[#1] (0cm,0.15em) rectangle (0.6*\pgfplotbarwidth,-0.15em);
+		}, },
+}
+\makeatother
+
+\definecolor{myred}{RGB}{202,0,32}
+\definecolor{myorange}{RGB}{244,165,130}
+\definecolor{myviolet}{RGB}{194,165,207}
+\definecolor{mycyan}{RGB}{146,197,222}
+\definecolor{myblue}{RGB}{5,113,176}
+\definecolor{mygreen}{RGB}{127,191,123}
+\definecolor{mytile}{RGB}{27,120,55}
+\definecolor{myblack}{RGB}{60,60,60}
+% \definecolor{palette3}{RGB}{247,247,247}
+
+
+
+\begin{document}
+
+% example 1: 
+%\pgfplotstableread[col sep = comma]{example-thput-0.1-yanbing-e1.csv}\speedtable
+% thput [0, 200], time [20,120]
+%    ymax    = 240,
+%    ymin    = -240,
+%    xmax    = 120,		
+%    xmin    =  20,
+%    
+%    ymax    = 110,
+%    ymin    = -110,
+%    xmax    = 120,		
+%    xmin    = 20,		
+%    scale only axis = true,
+%    xtick={20, 50,80,110},
+%    xticklabels ={,30s,60s,90s},
+    
+
+\pgfplotstableread[col sep = comma]{example-5gm-handover-1.csv}\speedtable
+%\pgfplotstableread[col sep = comma]{example-thput-0.1-yanbing-e3.csv}\speedtable
+
+
+\begin{tikzpicture}
+%\pgfkeys{
+%	/pgf/number format/precision=2, 
+%	/pgf/number format/fixed zerofill=true,
+%	/pgf/number format/fixed
+%}
+
+
+\begin{axis}[
+    % my filter=every 100 between 0 and 18000,
+    % ybar,
+    name=plot1,
+    % boxplot/draw direction=y,
+    %box plot width=0.5em,
+    %axis y,
+    %axis y line*=left,
+    %axis x line*=middle,
+    %y dir=reverse,
+    % box plot width=0.5em,
+    axis y line*=left,
+    axis x line*=middle,
+    width   = 8 cm, %6 cm,
+    height  = 2.5 cm, % 1.5 cm
+% example 1
+%    ymax    = 240,
+%    ymin    = -240,
+%    xmax    = 120,		
+%    xmin    =  20,		
+%    ytick={0, 100, 200},
+%    yticklabels={0,100, 200},
+    ymax    = 210,
+    ymin    = -150,
+    xmax    = 11, %16, %45, %115,	
+    xmin    = 0,		
+    ytick={0, 100, 200},
+    yticklabels={0, 100, 200},
+    %xtick={0, 5, 10, 15},
+    xtick={0,2,...,10},
+    xticklabels ={},%0s,2s,4s,6s,8s,10s},
+    scale only axis = true,
+    xtick align = inside,
+    tick label style={/pgf/number format/assume math mode=true},
+    %xtick={50,80,110},
+    %xticklabels ={0,30,60},
+%    area legend,
+    xticklabel style = {font=\normalsize},
+    yticklabel style = {font=\normalsize},
+    xticklabel style={yshift=-3.5ex, anchor=south},
+    % % xticklabel pos=right,
+    xtick pos = left,
+    % ytick pos = left,
+    % % yticklabel pos=right,
+    % % enlargelimits=0.15,
+%    legend style={
+%%        at      = {(1, 1.06)},
+%%        legend entries = {Default runs, Customized runs},
+%        font    = \normalsize,
+%        fill    = none,
+%        draw    = none,
+%%        anchor  = south east,
+%        legend cell align   = left,
+%        legend columns      = 2,
+%    },
+    ylabel={(Mbps)},
+    ylabel style={
+        font=\normalsize,
+        yshift =  -5 pt,
+        xshift =  12 pt,
+    },
+    % xlabel={Location in static tests},
+%    xlabel style={
+%        font=\normalsize,
+%        at={(axis description cs:0.5,-0.1)},
+%        anchor=north,
+%        xshift = 0 pt,
+%    },
+%xticklabel style={yshift=4ex, anchor=south},
+    ]
+
+\addplot[
+        % only marks,
+        %smooth,
+        %every mark/.append style={solid,fill=white},
+        % mark=star,
+        %mark=none,
+        %mark size=1pt,
+        color       = blue,
+        % draw opacity=0.7,
+        line width  = 1pt,
+        % line cap    = round,
+        % line join   = round,
+        %each nth point={1},
+        %draw = red,
+        %fill = blue,
+    ]
+    table[x=time,y=speed]      from \speedtable;
+    %table[x=time,y=speed]      from \speedtable \closedcycle;
+%    table[
+%%        x expr = \thisrowno{0},
+%%        y expr = \thisrowno{3}*100,
+%        x expr = \thisrowno{2},
+%        y expr = \thisrowno{1},
+%        col sep=comma,
+%% x expr = \thisrowno{2},
+%    ] {example-thput-0.01.csv}
+
+%\addplot table[x=time,y=speed]      from \speedtable \closedcycle;
+%\addplot [only marks] table[x=time,y=speed]      from \speedtable;
+
+%\addplot[mark=none, dashed, gray] coordinates {(0,2) (24,2)};
+
+%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(10,450) (10,500)};
+%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(20,450) (20,500)};
+%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(30,450) (30,500)};
+%\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(40,450) (40,500)};
+
+\draw[red,dashed]  (axis cs:1.39,-100) -- (axis cs: (1.39,300);
+\draw[blue,dashed]  (axis cs:1.71,-100) -- (axis cs: (1.71,300);
+\draw[red,<->]  (axis cs:1.39,-20) -- (axis cs: 1.71,-20);
+\node[red,right] at (axis cs: 2.5,-90) {\small \bf  Handover (320 ms)};
+\draw[red,line width=0.3mm,->] (axis cs:1.5,-20) to[out=330,in=170] (axis cs: 2.5,-90);
+
+\draw[orange,line width=0.3mm, dotted]  (axis cs:2.57,0) -- (axis cs: (2.57,600);
+\draw[orange,<->]  (axis cs:1.39,30) -- (axis cs: 2.57,30);
+\node[orange,right] at (axis cs: 2.5,-30) {\small \bf  Disruption (1180 ms)};
+\draw[orange,-] (axis cs:2,30) to[out=270,in=180] (axis cs: 2.5,-30);
+
+\draw[violet,line width=0.3mm, dotted]  (axis cs:6.16,0) -- (axis cs: (6.16,600);
+\draw[violet,line width=0.3mm, <->]  (axis cs:1.39,140) -- (axis cs: (6.16,140);
+\node[violet,right] at (axis cs: 2.5,180) {\small \bf Impact time (4.77s)};
+\draw[violet,-] (axis cs:4,140) to[out=30,in=270] (axis cs: 5,160);
+
+%\draw[red,dashed]  (axis cs:1.39,-100) -- (axis cs: (1.39,300);
+%\draw[blue,dashed]  (axis cs:1.71,-100) -- (axis cs: (1.71,300);
+%\draw[red,<->]  (axis cs:1.39,60) -- (axis cs: 1.71,60);
+%\node[red,right] at (axis cs: 2.5,30) {\small \bf  Handover (320 ms)};
+%\draw[red,line width=0.3mm,->] (axis cs:1.5,60) to[out=330,in=170] (axis cs: 2.8,30);
+%
+%\draw[orange,line width=0.3mm, dotted]  (axis cs:2.57,0) -- (axis cs: (2.57,600);
+%\draw[orange,<->]  (axis cs:1.39,100) -- (axis cs: 2.57,100);
+%\node[orange,right] at (axis cs: 2.5,80) {\small \bf  Disruption (1180 ms)};
+%\draw[orange,-] (axis cs:2,100) to[out=270,in=180] (axis cs: 2.8,80);
+%
+%\draw[violet,line width=0.3mm, dotted]  (axis cs:6.16,0) -- (axis cs: (6.16,600);
+%\draw[violet,line width=0.3mm, <->]  (axis cs:1.39,140) -- (axis cs: (6.16,140);
+%\node[violet,right] at (axis cs: 2.5,180) {\small \bf Impact time (4.77s)};
+%\draw[violet,-] (axis cs:4,140) to[out=30,in=270] (axis cs: 5,160);
+
+%\draw[blue,<->]  (axis cs:1.39,176.7) -- (axis cs: 6.42,176.7);
+%\draw[blue,<-]  (axis cs:1.39,180) -- (axis cs: 2.2,180);
+%\draw[blue,->]  (axis cs:5.6,180) -- (axis cs: 6.42,180);
+
+%\draw[red,opacity=0.2]  (axis cs:2.57,-200) -- (axis cs: 2.57,200);
+%\addplot+[mark=none, densely dashed,blue,line width=0.1pt] coordinates {(0,152.1) (200,152.1)};
+%\draw[red,dashed]  (axis cs:0.96,-150) -- (axis cs: 0.96,150);
+
+\end{axis}
+
+
+
+\begin{axis}[
+    % my filter=every 100 between 0 and 18000,
+    % line width = 1pt,
+    % ybar,
+    %boxplot/draw direction=y,
+    %box plot width=0.5em,
+    axis y,
+   %axis y line*=left,
+   % axis x line*=bottom,
+    axis x,
+%    y dir=reverse,
+    width   = 8 cm, %6 cm,
+    height  = 2.5 cm, % 1.5 cm
+% example 1
+%    ymax    = 220,
+%    ymin    =  0,
+%    xmax    = 120,		
+%    xmin    = 20,		
+%    scale only axis = true,
+%    xtick={20, 50,80,110},
+%    xticklabels ={,30s,60s,90s},
+    ymax    = 260,
+    ymin    = 0,
+    xmax    = 11, %16, %45, %115,
+    xmin    = 0,		
+    scale only axis = true,
+    %xtick={0,50,100},
+    %xtick={0,5,10,15},
+    xtick={0,2,...,10},
+    xticklabels ={0s,2s,4s,6s,8s,10s},
+    xtick align = inside,
+    tick label style={/pgf/number format/assume math mode=true},
+    %ytick={10, 40, 100},
+    ytick={7.69,30.77,76.9},
+    yticklabels={,4G-only,4G+5G$_{m}$},
+    %yticklabels={4G-only (PCell), 4G-only (P+S), 4G + $5G_m$},
+    %xticklabel style = {font=\small},   
+    xticklabel style={
+    yshift=-3pt, 
+    xshift=5pt, 
+    anchor=south},
+    yticklabel style = {font=\small},
+    % % xticklabel pos=right,
+    % xtick pos = left,
+    % ytick pos = left,
+    % % yticklabel pos=right,
+    % % enlargelimits=0.15,
+    legend style={
+%        at      = {(1, 1.06)},
+%        legend entries = {Default runs, Customized runs},
+        font    = \normalsize,
+        fill    = none,
+        draw    = none,
+%        anchor  = south east,
+        legend cell align   = left,
+        legend columns      = 2,
+    },
+    %ylabel={\bf Cellset},
+    ylabel style={
+        font=\small,
+        text width=0.8cm,
+        % at={(current axis.north west)},
+        rotate=-90,
+        xshift= 0.1cm,
+        yshift =  -0.55 cm,
+    },
+    %xlabel={Location in static tests},
+    xlabel style={
+        font=\normalsize,
+        at={(axis description cs:0.5,-0.05)},
+        anchor=north,
+        % at={(current axis.north west)},
+        % rotate=-90,
+        % xshift=-1ex,
+        xshift = 0 pt,
+        % yshift = 5 pt,
+    },
+    ]
+   
+%    currarrow,
+%    pos=0.5, 
+%    xscale=-1,
+%    sloped,
+%    scale=2] {};
+
+\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(0,7.69) (200,7.69)};
+\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(0,30.77) (200,30.77)};
+\addplot+[mark=none, densely dashed,gray,line width=0.1pt] coordinates {(0,76.9) (200,76.9)};
+
+%\draw[red,->]  (axis cs:1.1,57) -- (axis cs: 0.91,65);
+
+%\draw[-latex] (0,20)--(200,20) node[right]{latex arrow};
+%\draw[-Latex] 0,30)--(200,30) node[right]{\emph{new} Latex arrow};
+%\draw[-{Latex[length=3mm]}] (0,40)--(200,40) node[left]{with fixed length};
+
+\draw[red,->,line width=0.4mm] (axis cs:1.39,76.9) -- (axis cs: 1.39,30.77);
+\draw[blue,->,line width=0.4mm] (axis cs:1.71,30.77) -- (axis cs: 1.71,76.9);
+
+%\node[right] at (axis cs: 1.71,36) {\small P+S};
+%\node[right] at (axis cs: 1.71,9) {\small P};
+
+% example 1
+\iffalse
+\node[right] at (axis cs: 22,10) {\tiny   4G only (PCell only)};
+\node[right] at (axis cs: 22,40) {\tiny   4G+4G (P+S)};
+\node[blue,right] at (axis cs: 22,100) {\tiny \bf 4G+5G$_m$};
+
+\draw[red,->] (axis cs:21.734549999237,100) -- (axis cs: 21.734549999237,40);
+\draw[blue,->] (axis cs:22.1108698844909,40) -- (axis cs: 22.1108698844909,100);
+\draw[red,->] (axis cs:61.7156898975372,100) -- (axis cs: 61.7156898975372,10);
+%\draw[blue,->] (axis cs:62.04892993,10) -- (axis cs: 62.04892993,100); 
+%\draw[red,->] (axis cs:62.04892993,100) -- (axis cs: 62.04892993,10);
+\draw[blue,->] (axis cs:72.23065996,10) -- (axis cs: 72.23065996,100);
+\draw[red,->] (axis cs:86.29273009,100) -- (axis cs: 86.29273009,40);
+\draw[blue,->] (axis cs:86.6696701,40) -- (axis cs: 86.6696701,100);
+\draw[red,->] (axis cs:105.0193701,100) -- (axis cs: 105.0193701,10);
+\draw[blue,->] (axis cs:105.32899,10) -- (axis cs: 105.32899,100);
+\fi
+
+%% example
+%\addplot [color=red,opacity=0.2,fill=blue, 
+%fill opacity=0.05]coordinates {
+%	(0,0) 
+%	(1.28,0)
+%	(1.28,200)
+%%	(2.03636002540588,0)
+%%	(2.03636002540588,260)
+%	(0,200)
+%};
+%
+%\addplot [color=red,opacity=0.2,fill=myblue, 
+%fill opacity=0.05]coordinates {
+%	(2.57,0) 
+%	(6.42,0)
+%	(6.42,200)
+%%	(32.7364001274108,0)
+%%	(32.7364001274108,260)
+%	(2.57,200)
+%};
+%
+%\addplot [color=red,opacity=0.2,fill=blue, 
+%fill opacity=0.05]coordinates {
+%	(6.42,0) 
+%	(20,0)
+%	(20,200)
+%	(6.42,200)
+%};
+
+\end{axis}
+
+
+\end{tikzpicture}
+
+
+\end{document}

@@ -1,0 +1,212 @@
+% Template for a CDF graph
+%
+% Author: Zengwen Yuan
+% Version: 1.0  2017-03-08 init version
+% Note: to use package fontspec,
+% use XeLaTeX to compile
+
+\documentclass{article}
+\usepackage{siunitx}
+% \usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+%\usepackage{verbatim}
+\usepackage{sansmath}
+\usepackage{amsfonts}
+% \usepackage{times}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{1pt}
+\usetikzlibrary{patterns}
+
+\pgfplotsset{compat=newest}
+
+%\usepackage{fontspec}
+%\setmainfont[
+%BoldFont={Arial Bold},
+%ItalicFont={Arial Italic},
+%BoldItalicFont={Arial Bold Italic}
+%]{Arial}
+
+% # user-study-sync-overhead-context-tx-v2.txt
+%\pgfplotstableread{
+%0   0
+%1000   0.1
+%5000   0.8
+%10000   0.95
+%20000   1
+%}{\fakedata}
+
+\makeatletter
+\pgfplotsset{
+    my filter/.style args={every#1between#2and#3}{%
+        /pgfplots/x filter/.append code={%
+            \ifnum\coordindex<#2%
+            % Nothing
+            \else% Did we pass #3?
+            \ifnum\coordindex>#3%
+            %Nothing
+            \else% Ok filter is on, don't disturb \pgfmathresult for convenience
+            \pgfmathsetmacro\temp{int(mod(\coordindex,#1))}%
+            \ifnum0=\temp\relax% Are we on the nth point?
+            % Yes do nothing let it pass
+            \else% discard it
+            \let\pgfmathresult\pgfutil@empty
+            \fi%
+            \fi%
+            \fi%
+        }
+    }
+}
+\makeatother
+
+\pgfplotsset{
+    compat=newest,
+    legend image code/.code={
+        \draw[mark repeat=2,mark phase=2]
+        plot coordinates {
+            (0cm,0cm)
+            (0.15cm,0cm)        %% default is (0.3cm,0cm)
+            (0.3cm,0cm)         %% default is (0.6cm,0cm)
+        };%
+    }
+}
+
+% \definecolor{palette1}{RGB}{215,25,28}
+% \definecolor{palette2}{RGB}{253,174,97}
+% % \definecolor{palette3}{RGB}{255,255,191}
+% \definecolor{palette3}{RGB}{208,28,139}
+% \definecolor{palette4}{RGB}{184,225,134}
+% % \definecolor{palette4}{RGB}{171,221,164}
+% \definecolor{palette5}{RGB}{43,131,186}
+% \definecolor{palette6}{RGB}{208,28,139}
+
+% green -- blueish
+% \definecolor{palette1}{RGB}{0,109,44}
+% \definecolor{palette2}{RGB}{44,162,95}
+% \definecolor{palette3}{RGB}{67,162,202}
+% \definecolor{palette4}{RGB}{8,104,172}
+% \definecolor{palette5}{RGB}{8,81,156}
+
+\definecolor{myred}{RGB}{202,0,32}
+\definecolor{myorange}{RGB}{244,165,130}
+\definecolor{myviolet}{RGB}{194,165,207}
+\definecolor{mycyan}{RGB}{146,197,222}
+\definecolor{myblue}{RGB}{5,113,176}
+\definecolor{mygreen}{RGB}{127,191,123}
+\definecolor{mytile}{RGB}{27,120,55}
+\definecolor{myblack}{RGB}{60,60,60}
+% \definecolor{palette3}{RGB}{247,247,247}
+
+\begin{document}
+
+\begin{tikzpicture}
+    \begin{axis}[
+            x grid on,
+            ymax    = 100,
+            ymin    = 0,
+            %xmode=log,
+            xmax    = 440,
+            xmin    = -210,
+   	    width   = 1.75 cm,
+    	    height  =  2 cm,
+            scale only axis = true,
+            xtick align = inside,
+            tick label style={/pgf/number format/assume math mode=true},
+            % xtick = {0, 10, ..., 50},
+            % ytick = {0, 20, ..., 100},
+            xtick = {-200, 100, 0, 100, 200, 300, 400},
+            xticklabels = {-200, , 0, ,200, ,400},
+            ytick = {0, 25, ..., 100},
+           %xtick = {1, 10, 100},
+            %xticklabels = {1, 10, 100},
+            xticklabel style = {font=\normalsize},
+            yticklabel style = {font=\normalsize},
+            legend style={
+                at      = {(1.05, 0)},
+                font    = \small,
+                fill    = none,
+                draw    = none,
+                anchor  = south east,
+                legend cell align   = left,
+                legend columns      = 1,
+            },
+            xlabel={$\Delta_{BW}$ (MHz)},
+            ylabel={CDF (\%)},
+            ylabel style={
+                font=\normalsize,
+                % at={(current axis.north west)},
+                % rotate=-90,
+                % xshift=-1ex,
+                yshift = -10 pt,
+            },
+            xlabel style={
+                font=\normalsize,
+                % at={(current axis.north west)},
+                % rotate=-90,
+                % xshift=-1ex,
+                xshift = -5pt,
+                yshift = 3pt,
+            },
+        ]
+
+        \addplot+[
+            no markers,
+            %solid, 
+            dashed,
+            %smooth,
+            color       = blue,
+            line width  = 1.5pt,
+            line cap    = round,
+            line join   = round,
+            each nth point={1},
+        ]
+        table[
+            x expr = \thisrowno{0},
+            y expr = \thisrowno{1} * 100,
+            col sep=comma,
+        ] {A_bw_delta_grid_eval_cdf.csv}; 
+        
+        \addplot+[
+        no markers,
+        %dashed, 
+        solid,
+        %smooth,
+        color       = black,
+        line width  = 1.5pt,
+        line cap    = round,
+        line join   = round,
+        each nth point={1},
+        ]
+        table[
+        x expr = \thisrowno{0},
+        y expr = \thisrowno{1} * 100,
+        col sep=comma,
+        ] {V_bw_delta_grid_eval_cdf.csv}; 
+        
+        \addplot+[
+        no markers,
+        dotted, 
+        %solid,
+        %smooth,
+        color       = red,
+        line width  = 1.5pt,
+        line cap    = round,
+        line join   = round,
+        each nth point={1},
+        ]
+        table[
+        x expr = \thisrowno{0},
+        y expr = \thisrowno{1} * 100,
+        col sep=comma,
+        ] {T_bw_delta_grid_eval_cdf.csv}; 
+        
+       %{delta_cdf.txt};
+       \legend{{\bf \texttt{A}},{\bf \texttt{V}},{\bf \texttt{T}}};
+       
+       \addplot+[mark=none, densely dashed,gray,line width=0.75pt] coordinates {(0,0) (0,100)};
+
+    \end{axis}
+
+\end{tikzpicture}
+\end{document}

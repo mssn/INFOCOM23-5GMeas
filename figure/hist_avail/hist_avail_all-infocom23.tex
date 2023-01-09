@@ -1,0 +1,272 @@
+\documentclass{standalone}
+% translate with >> pdflatex -shell-escape <file>
+
+% This file is an extract of the PGFPLOTS manual, copyright by Christian Feuersaenger.
+% 
+% Feel free to use it as long as you cite the pgfplots manual properly.
+%
+% See
+%   http://pgfplots.sourceforge.net/pgfplots.pdf
+% for the complete manual.
+%
+% Any required input files (for <plot table> or <plot file> or the table package) can be downloaded
+% at
+% http://www.ctan.org/tex-archive/graphics/pgf/contrib/pgfplots/doc/latex/
+% and
+% http://www.ctan.org/tex-archive/graphics/pgf/contrib/pgfplots/doc/latex/plotdata/
+
+\usepackage{pgfplots}
+\usetikzlibrary{patterns}
+\pgfplotsset{compat=newest,
+	every axis/.append style={line width=1pt}}
+
+
+\pagestyle{empty}
+
+
+\definecolor{myred}{RGB}{202,0,32}
+\definecolor{myorange}{RGB}{244,165,130}
+\definecolor{myviolet}{RGB}{194,165,207}
+\definecolor{mycyan}{RGB}{146,197,222}
+\definecolor{myblue}{RGB}{5,113,176}
+\definecolor{mygreen}{RGB}{127,191,123}
+\definecolor{mytile}{RGB}{27,120,55}
+\definecolor{myblack}{RGB}{60,60,60}
+\definecolor{mygray}{RGB}{220,220,220}
+% \definecolor{palette3}{RGB}{247,247,247}
+
+
+\begin{document}
+	\begin{tikzpicture}
+		\tikzset{
+			hatch distance/.store in=\hatchdistance,
+			hatch distance=10pt,
+			hatch thickness/.store in=\hatchthickness,
+			hatch thickness=2pt
+		}
+		
+		\makeatletter
+		\pgfdeclarepatternformonly[\hatchdistance,\hatchthickness]{flexible hatch}
+		{\pgfqpoint{0pt}{0pt}}
+		{\pgfqpoint{\hatchdistance}{\hatchdistance}}
+		{\pgfpoint{\hatchdistance-1pt}{\hatchdistance-1pt}}%
+		{
+			\pgfsetcolor{\tikz@pattern@color}
+			\pgfsetlinewidth{\hatchthickness}
+			\pgfpathmoveto{\pgfqpoint{0pt}{0pt}}
+			\pgfpathlineto{\pgfqpoint{\hatchdistance}{\hatchdistance}}
+			\pgfusepath{stroke}
+		}
+		\makeatother
+		
+		\begin{axis}[
+			ymin=0,
+			ymax=105,
+			xmin = -0.1,
+			xmax = 5.05, %2.75, %4.15, %1.25,
+			width = 13.5cm, %10cm, %14cm,
+			height = 4cm,
+			%			height = 6cm,
+			axis line style={
+%				draw=none,
+			line width=0.02mm,
+%			semithick,
+			},
+%			axis x line=bottom,
+%			axis y line=left,
+				xtick style={draw=none},
+			tick align=inside,
+			ybar=-5pt,
+			bar width = 6pt, 
+			y tick label style={
+				/pgf/number format/1000 sep=},
+			%xlabel={{\bf Regions}: 1-5 ({\bf AT\&T}), 6-11 ({\bf Verizon}), 12,13({\bf T-Mobile})},
+			xlabel style={
+				%        font=\normalsize,
+				font=\normalsize,
+				% at={(current axis.north west)},
+				% rotate=-90,
+				% xshift=-1ex,
+				xshift = 0pt,
+				yshift = 5pt,
+			},
+			ylabel= {Utilization (\%)}, 
+			%Availability (\%)},
+			ylabel style={
+				%        font=\normalsize,
+				font=\normalsize,
+				% at={(current axis.north west)},
+				% rotate=-90,
+				% xshift=-1ex,
+				xshift = 0pt,
+				yshift = -10pt,
+			},
+			ytick={0,25,50,75,100},
+			yticklabel style={
+				font=\normalsize,
+				xshift = 3pt,
+				yshift = 0pt,
+			},
+			draw = none,
+			legend style={
+				at={(0.3,1)},
+				%pos=outer north west,
+				%legend columns=2,
+				%anchor=north,
+				anchor=north west,
+				font    = \normalsize,
+				%fill    = none,
+				draw = none,
+				legend cell align   = left,
+				legend columns=3,
+				%samplen = 1pt,
+				column sep=0ex,
+				%row sep=-5pt,
+			},
+			%enlargelimits=0.05,
+			%bar width=3pt,
+			% width=.75\textwidth,
+			%ytick={0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2},
+			xtick={0,0.4,0.8,1.2,1.6, 2.0, 2.4, 2.8, 3.2, 3.6, 4.0, 4.4, 4.8},
+			%			xtick={0,0.1,0.2, 0.3,0.4,0.5,0.6, 0.7, 0.8,0.9,1, 1.1, 1.2,1.3,1.4,1.5, 1.6,1.7,1.8,1.9,
+			%			2.0,2.1,2.2,2.3, 2.4,2.5,2.6, 2.7,2.8,2.9,3.0, 3.1,3.2,3.3,3.4, 3.5,3.6,3.7,3.8, 3.9,4.0,4.1,4.2,4.3,
+			%			4.4,4.5,4.6,4.7, 4.8,4.9,5.0
+			%			},
+			%yticklabels={$1C_{s-miss}$, $R1E_{s-miss}$,$R1D(w/o5G_m)_{s-miss}$, $R1C_{s-miss}$,$R1B(<20\%)_{s-miss}$,$R1B(w/5G_m)_{s-miss}$, $1b_{m-miss}$,$1a_{m-miss}$, $R1C_{m-miss}$,$R1B(<20\%)_{m-miss}$,$R1B_{m-miss}$},			
+			%xticklabels={1,2,3,4,5,6,7,8,9,10,11,12,13},
+			%xticklabels={1,2,3,4,5,6,7,8,9,10,11,12,13,1,2,3,4,5,6,7,8,9,10,11,12,13,1,2,3,4,5,6,7,8,9,10,11,12,13},
+			%xticklabels={1,2,3,4,5,6,7,8,9,10,11,12,13,1,2,3,4,5,6,7,8,9,10,11,12,13},
+			%xticklabels={1A,1B,1C,2A,2B,2C,3A,3B,3C,4A,4B,4C,5A,5B,5C,6A,6B,6C,7A,7B,7C,8A,8B,8C,9A,9B,9C,10A,10B,10C,11A,11B,11C,12A,12B,12C,13A,13B,13C},
+			%xticklabels={A,B,C,A,B,C,A,B,C,A,B,C,A,B,C,A,B,C,A,B,C,A,B,C,A,B,C,A,B,C,A,B,C,A,B,C,A,B,C},
+			%xticklabels={a,b,c,a,b,c,a,b,c,a,b,c,a,b,c,a,b,c,a,b,c,a,b,c,a,b,c,a,b,c,a,b,c,a,b,c,a,b,c},
+			xticklabels={R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11,R12,R13},
+			%xticklabels={R1,,,,R2,,,,R3,,,,R4,,,,R5,,,,R6,,,,R7,,,,R8,,,,R9,,,,R10,,,,R11,,,,R12,,,,R13},
+			%xticklabels={A-R1,A-R2,A-R3,A-R4,A-R5,V-R6,V-R7,V-R8,V-R9,V-R10,V-R11,T-R12,T-R13},
+			%yticklabels={,cell set,cell set sample,duration,handover}
+			xticklabel style={
+				%				font=\normalsize,
+				font=\normalsize,
+				xshift = 6pt,
+				yshift = 7pt,
+				%rotate=-60,
+			},
+			]
+			
+			%			\iffalse
+			%			\addplot+[
+			%			pattern=north east lines,
+			%			pattern color = red,
+			%			draw = red,
+			%			line color = red
+			%			%fill color = mygray,
+			%			area legend
+			%			]
+			%			%E1A
+			%			coordinates
+			%			{
+			%(0.0,45.4) (0.1,28.3) (0.2,43.0) (0.3,86.0) (0.4,36.1) (0.5,41.7) (0.6,42.3) (0.7,53.2) (0.8,40.4) (0.9,73.2) (1.0,75.0) (1.1,87.0) (1.2,67.7)
+			%(1.4,45.3) (1.5,27.8) (1.6,42.7) (1.7,86.4) (1.8,34.7) (1.9,41.2) (2.0,41.8) (2.1,49.1) (2.2,40.1) (2.3,75.5) (2.4,75.9) (2.5,87.8) (2.6,58.7)
+			%(2.8,45.1) (2.9,27.8) (3.0,42.7) (3.1,86.8) (3.2,34.2) (3.3,30.1) (3.4,41.7) (3.5,49.1) (3.6,39.5) (3.7,75.6) (3.8,76.3) (3.9,88.2) (4.0,44.6)
+			%			};
+			%			\fi
+			
+
+			% 5G
+			\addplot+[
+			%			pattern=north east lines,
+			%			pattern color = myred,
+			%			pattern=crosshatch,
+			%			draw = black,
+			%			line color = red,
+			%			bar width=4.5pt,
+			mark=none,
+			% pattern=north east lines,
+			%hatch distance=5pt,
+			%hatch thickness=0.5pt,
+			%fill opacity=0.5,
+			%pattern=grid, 
+%			pattern=crosshatch, 
+			%hatch distance=1pt,
+			%hatch thickness=0.5pt,
+%			draw opacity=0.5,
+			draw=blue,
+			pattern color=black,
+			%fill = bmygray,
+			%fill color = mygray,
+			area legend
+			]
+			coordinates
+%			{ (0,45.0)		(0.4,24.3)		(0.8,42.9)		(1.2,85.2)		(1.6,35.3)	(2,36.9)	(2.4,41.8)		(2.8,49.5)		(3.2,40.1)		(3.6,72.3)		(4,74.1)	(4.4,86.9)	(4.8,66.2)	
+% 0.45295 0.27759 0.42746 0.86401 0.34749 0.41208 0.41800 0.49144 0.40086 0.75522 0.75917 0.87766 0.58663
+				{(0,45.295) (0.4,27.759) (0.8,42.746) (1.2,86.401) (1.6,34.749) (2,41.208) (2.4,41.800) (2.8,49.144) (3.2,40.086) (3.6,75.522) (4,75.917) (4.4,87.766) (4.8,58.663) 
+			};
+
+%5GS					
+			\addplot+[
+			%pattern=crosshatch, 
+			%pattern = grid,
+%			pattern = north east lines,
+%			pattern=horizontal lines,
+			%crosshatch dots,
+			%north west lines,
+			pattern = none,
+			%draw opacity=0.5,
+			draw=black,
+			pattern color=mygray,
+			%mygreen,
+			%bar width=4.5pt,
+			fill color = mygray,
+			area legend
+			]
+			coordinates
+%			{(0.1,45.0)	(0.5,23.7)	(0.9,42.8)	(1.3,85.2)		(1.7,35.3)		(2.1,37.0)		(2.5,41.9)		(2.9,49.5)		(3.3,40.1)		(3.7,72.3)		(4.1,74.1)		(4.5,87.0)		(4.9,65.6)
+				{(0.1,18.2) (0.5,10.1) (0.9,40.8) (1.3,86.4) (1.7,31.4) (2.1,37.0) (2.5,38.0) (2.9,47.8) (3.3,21.4) (3.7,64.5) (4.1,64.6) (4.5,87.8) (4.9,58.7) 
+			};
+			
+\addplot+[
+%			pattern=horizontal lines, %north east lines,
+			pattern = north west lines,
+			%pattern=grid, 
+			%hatch distance=1pt,
+			%hatch thickness=0.5pt,
+%			draw opacity=0.5,
+			draw=blue,
+			pattern color=myblue,
+			fill color = myblue,
+			area legend
+			]
+			coordinates
+%			{	(0.2,44.9)		(0.6,23.7)	(1,42.7)	(1.4,86.1)		(1.8,34.2)		(2.2,34.5)		(2.6,41.7)	(3,48.3)		(3.4,39.5)		(3.8,75.1)		(4.2,75.4)	(4.6,87.8)		(5,56.2)
+				{(0.2,32.8) (0.6,24.3) (1,3.5) (1.8,3.9) (2.2,12.0) (2.6,5.2) (3,1.2) (3.4,11.7) (3.8,16.1) (4.2,9.2) 
+			};
+				
+		
+			\legend{5G($5GM | 5GS$), $5GS$,$5GM$};
+			%(5G_s | 5G_m)
+			%, $\rho = 95\%, \epsilon = 10\%$, $\rho = 95\%, \epsilon = 5\%$};
+			
+			%			\iffalse
+			%			\node[text=black] at (axis cs:0.5,110) {\bf 5G};
+			%			\node[text=black] at (axis cs:2.0,110) {\bf 5G$_m$};
+			%			\node[text=black] at (axis cs:3.4,110) {\bf 5G$_s$};
+			%			\fi
+			%			
+			%			\node[text=black] at (axis cs:0.1,110) {\bf 1};
+			%			\node[text=black] at (axis cs:0.5,110) {\bf 2};
+			%			\node[text=black] at (axis cs:0.9,110) {\bf 3};
+			%			\node[text=black] at (axis cs:1.3,110) {\bf 4};
+			%			\node[text=black] at (axis cs:1.7,110) {\bf 5};
+			%			\node[text=black] at (axis cs:2.1,110) {\bf 6};
+			%			\node[text=black] at (axis cs:2.5,110) {\bf 7};
+			%			\node[text=black] at (axis cs:2.9,110) {\bf 8};
+			%			\node[text=black] at (axis cs:3.3,110) {\bf 9};
+			%			\node[text=black] at (axis cs:3.7,110) {\bf 10};
+			%			\node[text=black] at (axis cs:4.1,110) {\bf 11};
+			%			\node[text=black] at (axis cs:4.5,110) {\bf 12};
+			%			\node[text=black] at (axis cs:4.9,110) {\bf 13};
+			
+			%\legend{E1A,E1B,E1C,E2A,E2B,E3A,E3B,E3C,E3D,E4A,E4B,E4C}
+		\end{axis}
+	\end{tikzpicture}
+	
+\end{document}
