@@ -7,7 +7,7 @@ This README is used to introduce our released datasets and source codes by our I
 “A Close Look at 5G in the Wild: Unrealized Potentials and Implications”.
 
 
-If you use our datasets and/or codes in your publication, please cite our CoNext'23 paper, 
+If you use our datasets and/or codes in your publication, please cite our INFOCOM'23 paper, 
 @inproceedings{liu2023close,
   title={A Close Look at 5G in the Wild: Unrealized Potentials and Implications},
   author={Liu, Yanbing and Peng, Chunyi},
