@@ -6,6 +6,15 @@
 This README is used to introduce our released datasets and source codes by our INFOCOM'23 work: 
 “A Close Look at 5G in the Wild: Unrealized Potentials and Implications”.
 
+
+If you use our datasets and/or codes in your publication, please cite our CoNext'23 paper, 
+@inproceedings{liu2023close,
+  title={A Close Look at 5G in the Wild: Unrealized Potentials and Implications},
+  author={Liu, Yanbing and Peng, Chunyi},
+  booktitle={IEEE International Conference on Computer Communications (INFOCOM’23)},
+  year={2023}
+}
+
 We have conducted 5G measurement study from April 2021 to Jan 2022 with 13 
 regions R1-R13 in two cities, Indianapolis and Chicago with three top-tier US 
 carriers: AT&T, Verizon and T-Mobile. We run our experiments through MI-LAB 
